@@ -14,6 +14,10 @@ public interface Killable
 	 void generateLiberties();
 	 
 	 void removeLiberties(int[] liberty);
+	 
+	 void checkDead();
+	 
+	 void dies();
 
 	 boolean isDead();
 }

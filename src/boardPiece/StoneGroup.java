@@ -3,7 +3,7 @@ package boardPiece;
 import java.util.ArrayList;
 import java.util.List;
 
-import Exception.ConstructorException;
+import exception.ConstructorException;
 import interfacePack.Killable;
 
 public class StoneGroup implements Killable
@@ -57,11 +57,25 @@ public class StoneGroup implements Killable
 	{
 		return liberties.isEmpty();
 	}
+	
+	public void checkDead()
+	{
+		if(isDead())
+			dies();
+	}
+	
+	public void dies()
+	{
+		for(Stone stone: member)
+			stone.dies();
+		endGroup();
+	}
 
 	@Override
 	public void removeLiberties(int[] liberty)
 	{
 		liberties.remove(liberty);
+		checkDead();
 	}
 
 	public void addMember(Stone stone)
