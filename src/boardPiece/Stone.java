@@ -44,13 +44,13 @@ public class Stone extends BoardPiece implements Killable
 	{
 		// TODO this looks awful
 		neighbours[0] = getBoard()
-				.getGoButton(getXPosition() + 1, getYPosition()).getPiece();
+				.getBoardPiece(getXPosition() + 1, getYPosition());
 		neighbours[1] = getBoard()
-				.getGoButton(getXPosition() - 1, getYPosition()).getPiece();
+				.getBoardPiece(getXPosition() - 1, getYPosition());
 		neighbours[2] = getBoard()
-				.getGoButton(getXPosition(), getYPosition() + 1).getPiece();
+				.getBoardPiece(getXPosition(), getYPosition() + 1);
 		neighbours[3] = getBoard()
-				.getGoButton(getXPosition(), getYPosition() - 1).getPiece();
+				.getBoardPiece(getXPosition(), getYPosition() - 1);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class Stone extends BoardPiece implements Killable
 	@Override
 	public void setALiberties(int[] liberty)
 	{
-		if (validatePosition(liberty))
+		if (validatePosition(liberty,getBoard()))
 			liberties.add(liberty);
 	}
 

@@ -12,25 +12,28 @@ public class App extends Application
 	{
 		 //TODO do real app
 		 launch(args);
-		 try
-		{
-			new Board(19, 19);
-		}
-		catch (ConstructorException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (SuicideException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	
+		
 	}
 
 	@Override
 	public void start(Stage arg0) throws Exception
 	{
+		 try
+			{
+				new Board(19, 19);
+			}
+			catch (ConstructorException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (SuicideException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 System.out.println("Exit");
 		// TODO Auto-generated method stub
 		
 	}

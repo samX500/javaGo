@@ -20,7 +20,7 @@ public class BoardPiece
 	public BoardPiece(Board board, int[] position, TileStatus status)
 			throws ConstructorException, SuicideException
 	{
-		if (board != null && validatePosition(position))
+		if (board != null && validatePosition(position,board))
 		{
 			setBoard(board);
 			setPosition(position);
@@ -31,6 +31,11 @@ public class BoardPiece
 	public Board getBoard()
 	{
 		return board;
+	}
+	
+	public void setBoard(Board board)
+	{
+		this.board = board;
 	}
 
 	public TileStatus getStatus()
@@ -67,10 +72,7 @@ public class BoardPiece
 		}
 	}
 
-	public void setBoard(Board board)
-	{
-		this.board = board;
-	}
+
 
 	public int[] getPosition()
 	{
@@ -92,10 +94,10 @@ public class BoardPiece
 		this.position = position;
 	}
 
-	public boolean validatePosition(int[] position)
+	public boolean validatePosition(int[] position,Board board)
 	{
 		return position != null && position.length != 0 && position[0] > 0
-				&& position[1] > 0 && position[0] < getBoard().getLenght()
-				&& position[1] < getBoard().getWidth();
+				&& position[1] > 0 && position[0] < board.getLenght()
+				&& position[1] < board.getWidth();
 	}
 }
