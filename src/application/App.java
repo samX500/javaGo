@@ -1,40 +1,34 @@
 package application;
 
+import java.util.List;
+
 import board.Board;
 import exception.ConstructorException;
 import exception.SuicideException;
+import gui.Gui;
 import javafx.application.Application;
+import javafx.scene.image.Image;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class App extends Application
 {
-	 public static void main(String[] args)
-	{
-		 //TODO do real app
-		 launch(args);
 	
-		
+	public static final int BUTTON_SIZE = 50;
+	
+	public static void main(String[] args)
+	{
+		launch(args);
 	}
 
 	@Override
-	public void start(Stage arg0) throws Exception
+	public void start(Stage stage) throws Exception
 	{
-		 try
-			{
-				new Board(19, 19);
-			}
-			catch (ConstructorException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (SuicideException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		 System.out.println("Exit");
-		// TODO Auto-generated method stub
+		//TODO code app
+		Board board = new Board(19, 19);
+		Gui.setupGui();
+		Gui.showView(stage,board);
 		
 	}
+
 }

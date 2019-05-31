@@ -1,7 +1,6 @@
 package board;
 
 import boardPiece.*;
-import control.*;
 import exception.ConstructorException;
 import exception.SuicideException;
 import javafx.scene.layout.GridPane;
@@ -15,7 +14,6 @@ public class Board
 	private List<BoardPiece> pieces;
 	private int lenght;
 	private int width;
-	GridPane grid;
 
 	public Board(int lenght, int width) throws ConstructorException, SuicideException
 	{
@@ -37,18 +35,19 @@ public class Board
 
 	private void buildBoard()
 	{
-		for (int i = 0; i < lenght + BORDER; i++)
+
+		for (int i = 0; i < lenght; i++)
 		{
-			for (int j = 0; j < width + BORDER; j++)
+			for (int j = 0; j < width; j++)
 			{
 				if (isBorder(i, j))
 				{
 					setBoardPiece(TileStatus.BORDER, i, j);
-					System.out.println("B " + i + " " + j);
+
 				} else
 				{
 					setBoardPiece(TileStatus.EMPTY, i, j);
-					System.out.println("E " + i + " " + j);
+
 				}
 			}
 		}
@@ -57,7 +56,7 @@ public class Board
 	private boolean isBorder(int xPosition, int yPosition)
 	{
 		// TODO find a better way to do -1
-		return xPosition == 0 || xPosition == lenght + BORDER - 1 || yPosition == 0 || yPosition == width + BORDER - 1;
+		return xPosition == 0 || xPosition == lenght - 1 || yPosition == 0 || yPosition == width - 1;
 	}
 
 	private boolean validateSize(int lenght, int width)
@@ -87,8 +86,8 @@ public class Board
 
 	public void setSize(int lenght, int width)
 	{
-		setLenght(lenght);
-		setWidth(width);
+		setLenght(lenght + BORDER);
+		setWidth(width + BORDER);
 	}
 
 	public void setBoardPiece(TileStatus status, int xPosition, int yPosition)
@@ -117,6 +116,12 @@ public class Board
 	{
 		// TODO I am sure this won't work
 		return pieces.get((xPosition * lenght) + yPosition);
+	}
+
+	public BoardPiece getBoardPiece(int index)
+	{
+		// TODO not sure if this is good practice
+		return pieces.get(index);
 	}
 
 }

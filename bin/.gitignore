@@ -1,4 +1,7 @@
-/control/
-/board/
+/borderTile.jpg
+/emptyTile.jpg
+/goBlack.png
+/goWhite.png
+/gui/
 /boardPiece/
-/application/
+/board/

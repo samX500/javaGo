@@ -17,14 +17,16 @@ public class BoardPiece
 		// children class
 	}
 
-	public BoardPiece(Board board, int[] position, TileStatus status)
-			throws ConstructorException, SuicideException
+	public BoardPiece(Board board, int[] position, TileStatus status) throws ConstructorException, SuicideException
 	{
-		if (board != null && validatePosition(position,board))
+		if (board != null && validatePosition(position, board))
 		{
 			setBoard(board);
 			setPosition(position);
 			setContent(status);
+		} else
+		{
+			 throw new ConstructorException("error creating boardPiece");
 		}
 	}
 
@@ -32,7 +34,7 @@ public class BoardPiece
 	{
 		return board;
 	}
-	
+
 	public void setBoard(Board board)
 	{
 		this.board = board;
@@ -57,22 +59,24 @@ public class BoardPiece
 	{
 		switch (status)
 		{
-			case EMPTY:
-				content = null;
-				break;
-			case BORDER:
-				content = null;
-				break;
-			case BLACK:
-				content = new Stone(true);
-				break;
-			case WHITE:
-				content = new Stone(false);
-				break;
+		case EMPTY:
+			content = null;
+			setStatus(TileStatus.EMPTY);
+			break;
+		case BORDER:
+			content = null;
+			setStatus(TileStatus.BORDER);
+			break;
+		case BLACK:
+			content = new Stone(true);
+			setStatus(TileStatus.BLACK);
+			break;
+		case WHITE:
+			content = new Stone(false);
+			setStatus(TileStatus.WHITE);
+			break;
 		}
 	}
-
-
 
 	public int[] getPosition()
 	{
@@ -94,10 +98,18 @@ public class BoardPiece
 		this.position = position;
 	}
 
-	public boolean validatePosition(int[] position,Board board)
+	public boolean validatePosition(int[] position, Board board)
 	{
-		return position != null && position.length != 0 && position[0] > 0
-				&& position[1] > 0 && position[0] < board.getLenght()
-				&& position[1] < board.getWidth();
+
+		if (!(position != null && position.length != 0 && position[0] >= 0 && position[1] >= 0
+				&& position[0] < board.getLenght() && position[1] < board.getWidth()))
+		{
+			System.out.println(position[0] + " " + board.getLenght());
+			System.out.println(position[1] + " " + board.getWidth());
+			System.out.println(position[0] < board.getLenght());
+			System.out.println((position[1] < board.getWidth()) + "\n\n");
+		}
+		return position != null && position.length != 0 && position[0] >= 0 && position[1] >= 0
+				&& position[0] < board.getLenght() && position[1] < board.getWidth();
 	}
 }
