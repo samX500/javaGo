@@ -14,10 +14,10 @@ public class Stone extends BoardPiece implements Killable
 
 	private BoardPiece[] neighbours;
 
-	Stone(boolean color)
+	Stone(Board board,int[] position,boolean color)
 			throws ConstructorException, SuicideException
 	{
-		super();
+		super(board,position);
 		setColor(color);
 		generateNeighbours();
 		generateLiberties();
@@ -28,6 +28,7 @@ public class Stone extends BoardPiece implements Killable
 			throw new SuicideException(
 					"Stone dies at the same times it's played");
 		}
+		setContent(this);
 	}
 
 	public boolean getColor()
@@ -43,6 +44,7 @@ public class Stone extends BoardPiece implements Killable
 	private void generateNeighbours()
 	{
 		// TODO this looks awful
+		neighbours = new BoardPiece[4]; 
 		neighbours[0] = getBoard()
 				.getBoardPiece(getXPosition() + 1, getYPosition());
 		neighbours[1] = getBoard()
@@ -179,4 +181,8 @@ public class Stone extends BoardPiece implements Killable
 		}
 	}
 
+	public String toString()
+	{
+		return getXPosition()+" ,"+getYPosition()+"\t:"+isBlack;
+	}
 }

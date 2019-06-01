@@ -90,7 +90,7 @@ public class Board
 		setWidth(width + BORDER);
 	}
 
-	public void setBoardPiece(TileStatus status, int xPosition, int yPosition)
+	private void setBoardPiece(TileStatus status, int xPosition, int yPosition)
 	{
 		try
 		{
@@ -107,9 +107,21 @@ public class Board
 		}
 	}
 
-	public void resetBoardPiece(BoardPiece newPiece, int xPosition, int yPosition)
+	public void resetBoardPiece(TileStatus status, int xPosition, int yPosition)
 	{
-		pieces.set((xPosition * lenght) + yPosition, newPiece);
+		try
+		{
+			pieces.set((xPosition * lenght) + yPosition,
+					new BoardPiece(this, new int[] { xPosition, yPosition }, status));
+		} catch (ConstructorException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SuicideException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public BoardPiece getBoardPiece(int xPosition, int yPosition)

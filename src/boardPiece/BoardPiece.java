@@ -11,10 +11,13 @@ public class BoardPiece
 	private TileStatus status;
 	private Stone content;
 
-	public BoardPiece()
+	public BoardPiece(Board board, int[] position)
 	{
-		// TODO empty constructor, check for better coding of super call in
-		// children class
+		if (board != null && validatePosition(position, board))
+		{
+			setBoard(board);
+			setPosition(position);
+		}
 	}
 
 	public BoardPiece(Board board, int[] position, TileStatus status) throws ConstructorException, SuicideException
@@ -28,6 +31,7 @@ public class BoardPiece
 		{
 			 throw new ConstructorException("error creating boardPiece");
 		}
+		System.out.println(position);
 	}
 
 	public Board getBoard()
@@ -55,6 +59,10 @@ public class BoardPiece
 		return content;
 	}
 
+	public void setContent(Stone stone)
+	{
+		content = stone;
+	}
 	public void setContent(TileStatus status) throws ConstructorException, SuicideException
 	{
 		switch (status)
@@ -68,11 +76,11 @@ public class BoardPiece
 			setStatus(TileStatus.BORDER);
 			break;
 		case BLACK:
-			content = new Stone(true);
+			content = new Stone(board,position,true);
 			setStatus(TileStatus.BLACK);
 			break;
 		case WHITE:
-			content = new Stone(false);
+			content = new Stone(board,position,false);
 			setStatus(TileStatus.WHITE);
 			break;
 		}
@@ -111,5 +119,10 @@ public class BoardPiece
 		}
 		return position != null && position.length != 0 && position[0] >= 0 && position[1] >= 0
 				&& position[0] < board.getLenght() && position[1] < board.getWidth();
+	}
+	
+	public String toString()
+	{
+		return position[0]+" ,"+position[1]+"\t:"+content;
 	}
 }

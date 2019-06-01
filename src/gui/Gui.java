@@ -7,7 +7,11 @@ import com.sun.org.apache.bcel.internal.generic.LALOAD;
 
 import application.App;
 import board.Board;
+import boardPiece.BoardPiece;
+import boardPiece.TileStatus;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -42,11 +46,12 @@ public class Gui
 		// TODO add more to the gui
 		mainStage = stage;
 		mainStage.setTitle("Test");
-		showBoard(currentBoard);
+		GridPane pane = showBoard(currentBoard);
 		mainStage.show();
+
 	}
 
-	public static void showBoard(Board currentBoard)
+	public static GridPane showBoard(Board currentBoard)
 	{
 		GridPane board = new GridPane();
 		for (int i = 0; i < currentBoard.getLenght(); i++)
@@ -63,7 +68,8 @@ public class Gui
 		for (int i = 0; i < board.getChildren().size(); i++)
 		{
 			Button thisButton = (Button) board.getChildren().get(i);
-			switch (currentBoard.getBoardPiece(i).getStatus())
+			BoardPiece piece = currentBoard.getBoardPiece(i);
+			switch (piece.getStatus())
 			{
 
 			case BLACK:
@@ -79,8 +85,26 @@ public class Gui
 				thisButton.setBackground(images.get(3));
 				break;
 			}
+
+			if (piece.getStatus() == TileStatus.EMPTY)
+			{
+				// TODO add player swap
+				thisButton.setOnMouseEntered(e -> thisButton.setBackground(images.get(0)));
+				thisButton.setOnMouseExited(e -> thisButton.setBackground(images.get(2)));
+				thisButton.setOnAction(new EventHandler<ActionEvent>()
+				{
+
+					@Override
+					public void handle(ActionEvent event)
+					{
+						System.out.println(piece);
+						currentBoard.resetBoardPiece(TileStatus.BLACK, piece.getXPosition(), piece.getYPosition());
+					}
+				});
+			}
 		}
 		mainStage.setScene(scene);
+		return board;
 	}
 
 	private static void loadImages()
