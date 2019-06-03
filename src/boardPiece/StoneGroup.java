@@ -9,20 +9,18 @@ import interfacePack.Killable;
 public class StoneGroup implements Killable
 {
 	List<Stone> member;
+	List<int[]> liberties = new ArrayList<>();
 
-	public StoneGroup(Stone firstStone, Stone secondStone)
-			throws ConstructorException
+	public StoneGroup(Stone firstStone, Stone secondStone) throws ConstructorException
 	{
 		if (firstStone != null && secondStone != null)
 		{
 			member = new ArrayList<>();
 			addMember(firstStone);
 			addMember(secondStone);
-		}
-		else
+		} else
 		{
-			throw new ConstructorException(
-					"Issue trying to create a new stoneGroup");
+			throw new ConstructorException("Issue trying to create a new stoneGroup");
 		}
 	}
 
@@ -57,16 +55,16 @@ public class StoneGroup implements Killable
 	{
 		return liberties.isEmpty();
 	}
-	
+
 	public void checkDead()
 	{
-		if(isDead())
+		if (isDead())
 			dies();
 	}
-	
+
 	public void dies()
 	{
-		for(Stone stone: member)
+		for (Stone stone : member)
 			stone.dies();
 		endGroup();
 	}
@@ -95,7 +93,7 @@ public class StoneGroup implements Killable
 
 	public void addGroup(StoneGroup group)
 	{
-		if (group != null)
+		if (group != null && this != group)
 		{
 			for (Stone stone : group.getMember())
 				addMember(stone);
@@ -106,5 +104,15 @@ public class StoneGroup implements Killable
 	public List<Stone> getMember()
 	{
 		return member;
+	}
+
+	public String toString()
+	{
+		String toString = "";
+		for (Stone stone : member)
+		{
+			toString += stone.toString() + "\n";
+		}
+		return toString;
 	}
 }

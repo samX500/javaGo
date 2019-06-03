@@ -4,11 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sun.org.apache.bcel.internal.generic.LALOAD;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 import application.App;
 import board.Board;
 import boardPiece.BoardPiece;
+import boardPiece.BoardPiece.*;
+import boardPiece.Color;
+import boardPiece.Stone;
+import boardPiece.Tile;
 import boardPiece.TileStatus;
+import exception.SuicideException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -69,27 +75,17 @@ public class Gui
 		{
 			Button thisButton = (Button) board.getChildren().get(i);
 			BoardPiece piece = currentBoard.getBoardPiece(i);
-			switch (piece.getStatus())
-			{
 
-			case BLACK:
-				thisButton.setBackground(images.get(0));
-				break;
-			case WHITE:
-				thisButton.setBackground(images.get(1));
-				break;
-			case EMPTY:
-				thisButton.setBackground(images.get(2));
-				break;
-			case BORDER:
-				thisButton.setBackground(images.get(3));
-				break;
-			}
+			if (piece instanceof Stone)
+				thisButton.setBackground(((Stone) piece).getColor() == Color.BLACK ? images.get(0) : images.get(1));
+			else
+				thisButton
+						.setBackground(((Tile) piece).getStatus() == TileStatus.EMPTY ? images.get(2) : images.get(3));
 
-			if (piece.getStatus() == TileStatus.EMPTY)
+			if (piece instanceof Tile && ((Tile) piece).getStatus() == TileStatus.EMPTY)
 			{
 				// TODO add player swap
-				thisButton.setOnMouseEntered(e -> thisButton.setBackground(images.get(0)));
+				thisButton.setOnMouseEntered(e -> thisButton.setBackground(images.get(App.getPlayer() ? 0 : 1)));
 				thisButton.setOnMouseExited(e -> thisButton.setBackground(images.get(2)));
 				thisButton.setOnAction(new EventHandler<ActionEvent>()
 				{
@@ -97,8 +93,21 @@ public class Gui
 					@Override
 					public void handle(ActionEvent event)
 					{
-						System.out.println(piece);
-						currentBoard.resetBoardPiece(TileStatus.BLACK, piece.getXPosition(), piece.getYPosition());
+
+						try
+						{
+							if (App.getPlayer())
+								currentBoard.setStone(Color.BLACK, piece.getXPosition(), piece.getYPosition());
+							else
+								currentBoard.setStone(Color.WHITE, piece.getXPosition(), piece.getYPosition());
+						} catch (SuicideException e)
+						{
+							// TODO figure out logic for suicide
+							e.printStackTrace();
+						}
+						App.incrementTurn();
+						showBoard(currentBoard);
+
 					}
 				});
 			}

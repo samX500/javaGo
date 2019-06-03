@@ -1,5 +1,6 @@
 package boardPiece;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import board.Board;
@@ -10,14 +11,15 @@ import interfacePack.Killable;
 public class Stone extends BoardPiece implements Killable
 {
 	private StoneGroup currentGroup;
-	private boolean isBlack;
+	private Color color;
 
+	List<int[]> liberties;
 	private BoardPiece[] neighbours;
 
-	Stone(Board board,int[] position,boolean color)
-			throws ConstructorException, SuicideException
+	public Stone(Color color, int[] position, Board board) throws ConstructorException, SuicideException
 	{
-		super(board,position);
+		super(position, board);
+		liberties = new ArrayList<>();
 		setColor(color);
 		generateNeighbours();
 		generateLiberties();
@@ -25,34 +27,47 @@ public class Stone extends BoardPiece implements Killable
 		if (isDead())
 		{
 			dies();
-			throw new SuicideException(
-					"Stone dies at the same times it's played");
+			throw new SuicideException("Stone dies at the same times it's played");
 		}
-		setContent(this);
 	}
 
-	public boolean getColor()
+	public Color getColor()
 	{
-		return isBlack;
+		return color;
 	}
 
-	public void setColor(boolean color)
+	public void setColor(Color color)
 	{
-		isBlack = color;
+		this.color = color;
 	}
 
 	private void generateNeighbours()
 	{
-		// TODO this looks awful
-		neighbours = new BoardPiece[4]; 
-		neighbours[0] = getBoard()
-				.getBoardPiece(getXPosition() + 1, getYPosition());
-		neighbours[1] = getBoard()
-				.getBoardPiece(getXPosition() - 1, getYPosition());
-		neighbours[2] = getBoard()
-				.getBoardPiece(getXPosition(), getYPosition() + 1);
-		neighbours[3] = getBoard()
-				.getBoardPiece(getXPosition(), getYPosition() - 1);
+		neighbours = new BoardPiece[4];
+		neighbours[0] = getBoard().getBoardPiece(getXPosition() + 1, getYPosition());
+		neighbours[1] = getBoard().getBoardPiece(getXPosition() - 1, getYPosition());
+		neighbours[2] = getBoard().getBoardPiece(getXPosition(), getYPosition() + 1);
+		neighbours[3] = getBoard().getBoardPiece(getXPosition(), getYPosition() - 1);
+	}
+
+	private void addNeighbours(Stone newNeighbours)
+	{
+		int index = validateNeighbours(newNeighbours.getPosition());
+		if (index >= 0)
+			neighbours[index] = newNeighbours;
+	}
+
+	private int validateNeighbours(int[] position)
+	{
+		if (position[0] == getXPosition() + 1 && position[1] == getYPosition())
+			return 0;
+		else if (position[0] == getXPosition() - 1 && position[1] == getYPosition())
+			return 1;
+		else if (position[0] == getXPosition() && position[1] == getYPosition() + 1)
+			return 2;
+		else if (position[0] == getXPosition() && position[1] == getYPosition() - 1)
+			return 3;
+		return -1;
 	}
 
 	@Override
@@ -64,7 +79,7 @@ public class Stone extends BoardPiece implements Killable
 	@Override
 	public void setALiberties(int[] liberty)
 	{
-		if (validatePosition(liberty,getBoard()))
+		if (validatePosition(liberty, getBoard()))
 			liberties.add(liberty);
 	}
 
@@ -73,7 +88,7 @@ public class Stone extends BoardPiece implements Killable
 	{
 		for (BoardPiece status : neighbours)
 		{
-			if (status.getStatus() == TileStatus.EMPTY)
+			if (status instanceof Tile && ((Tile) status).getStatus() == TileStatus.EMPTY)
 			{
 				setALiberties(status.getPosition());
 			}
@@ -114,11 +129,16 @@ public class Stone extends BoardPiece implements Killable
 	{
 		for (BoardPiece status : neighbours)
 		{
-			Stone temp = status.getContent();
+			Stone temp = status instanceof Stone ? (Stone) status : null;
 			if (temp != null && temp.getColor() == getColor())
+			{
+				temp.addNeighbours(this);
 				findGroup(temp);
-			else if (temp != null)
+			} else if (temp != null)
+			{
+				temp.addNeighbours(this);
 				temp.removeLiberties(getPosition());
+			}
 
 		}
 	}
@@ -145,8 +165,25 @@ public class Stone extends BoardPiece implements Killable
 		if (isInGroup())
 			getGroup().removeLiberties(liberty);
 
-		liberties.remove(liberty);
+		int index = findLiberty(liberty);
+		if (index >= 0)
+			liberties.remove(index);
 		checkDead();
+	}
+
+	private int findLiberty(int[] liberty)
+	{
+		int index = -1;
+
+		for (int i = 0; i < liberties.size() && index == -1; i++)
+		{
+			int[] temp = liberties.get(i);
+			if (temp[0] == liberty[0] && temp[1] == liberty[1])
+			{
+				index = i;
+			}
+		}
+		return index;
 	}
 
 	public void checkDead()
@@ -161,28 +198,23 @@ public class Stone extends BoardPiece implements Killable
 	{
 		for (BoardPiece status : neighbours)
 		{
-			Stone temp = status.getContent();
-
+			Stone temp = status instanceof Stone ? (Stone) status : null;
 			if (temp != null && temp.getColor() != getColor())
+			{
 				temp.setALiberties(getPosition());
 
-			try
-			{
-				super.setContent(TileStatus.EMPTY);
 			}
-			catch (ConstructorException e)
-			{
-				e.printStackTrace();
-			}
-			catch (SuicideException e)
-			{
-				e.printStackTrace();
-			}
+
 		}
+
+		getBoard().setTile(TileStatus.EMPTY, getXPosition(), getYPosition());
+
 	}
 
 	public String toString()
 	{
-		return getXPosition()+" ,"+getYPosition()+"\t:"+isBlack;
+		String color = getColor() == Color.BLACK ? "Black" : "White";
+		String isGroup = isInGroup() ? " is in a group" : " isn't in a group";
+		return color + " stone at:" + getXPosition() + " ," + getYPosition() + isGroup;
 	}
 }

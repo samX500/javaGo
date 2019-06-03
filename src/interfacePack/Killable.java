@@ -5,7 +5,6 @@ import java.util.List;
 
 public interface Killable
 {
-	 List<int[]> liberties = new ArrayList<>();
 	 
 	 List<int[]> getLiberties();
 	 

@@ -40,14 +40,15 @@ public class Board
 		{
 			for (int j = 0; j < width; j++)
 			{
-				if (isBorder(i, j))
+				try
 				{
-					setBoardPiece(TileStatus.BORDER, i, j);
-
-				} else
+					if (isBorder(i, j))
+						pieces.add((i * lenght) + j, new Tile(TileStatus.BORDER, new int[] { i, j }, this));
+					else
+						pieces.add((i * lenght) + j, new Tile(TileStatus.EMPTY, new int[] { i, j }, this));
+				} catch (ConstructorException e)
 				{
-					setBoardPiece(TileStatus.EMPTY, i, j);
-
+					e.printStackTrace();
 				}
 			}
 		}
@@ -90,36 +91,24 @@ public class Board
 		setWidth(width + BORDER);
 	}
 
-	private void setBoardPiece(TileStatus status, int xPosition, int yPosition)
+	public void setTile(TileStatus status, int xPosition, int yPosition)
 	{
 		try
 		{
-			pieces.add((xPosition * lenght) + yPosition,
-					new BoardPiece(this, new int[] { xPosition, yPosition }, status));
+			pieces.set((xPosition * lenght) + yPosition, new Tile(status, new int[] { xPosition, yPosition }, this));
 		} catch (ConstructorException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SuicideException e)
-		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void resetBoardPiece(TileStatus status, int xPosition, int yPosition)
+	public void setStone(Color color, int xPosition, int yPosition) throws SuicideException
 	{
 		try
 		{
-			pieces.set((xPosition * lenght) + yPosition,
-					new BoardPiece(this, new int[] { xPosition, yPosition }, status));
+			pieces.set((xPosition * lenght) + yPosition, new Stone(color, new int[] { xPosition, yPosition }, this));
 		} catch (ConstructorException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SuicideException e)
-		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

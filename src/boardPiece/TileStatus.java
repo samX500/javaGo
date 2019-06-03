@@ -2,5 +2,5 @@ package boardPiece;
 
 public enum TileStatus
 {
-	EMPTY,BORDER,BLACK,WHITE
+	EMPTY,BORDER
 }
