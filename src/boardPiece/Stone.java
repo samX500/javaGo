@@ -54,7 +54,10 @@ public class Stone extends BoardPiece implements Killable
 	{
 		int index = validateNeighbours(newNeighbours.getPosition());
 		if (index >= 0)
+		{
 			neighbours[index] = newNeighbours;
+			removeLiberties(newNeighbours.getPosition());
+		}
 	}
 
 	private int validateNeighbours(int[] position)
@@ -132,12 +135,12 @@ public class Stone extends BoardPiece implements Killable
 			Stone temp = status instanceof Stone ? (Stone) status : null;
 			if (temp != null && temp.getColor() == getColor())
 			{
-				temp.addNeighbours(this);
 				findGroup(temp);
+				temp.addNeighbours(this);
+
 			} else if (temp != null)
 			{
 				temp.addNeighbours(this);
-				temp.removeLiberties(getPosition());
 			}
 
 		}

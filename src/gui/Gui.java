@@ -6,7 +6,7 @@ import java.util.List;
 import com.sun.org.apache.bcel.internal.generic.LALOAD;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
-import application.App;
+import application.Game;
 import board.Board;
 import boardPiece.BoardPiece;
 import boardPiece.BoardPiece.*;
@@ -29,25 +29,38 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-public class Gui
+public class Gui extends Application
 {
-	private static Stage mainStage;
-	private static List<Background> images;
+	public static final int BUTTON_SIZE = 50;
+
+	private Stage mainStage;
+	private List<Background> images;
+	private Game game;
 
 	public static void main(String[] args)
 	{
-		// TODO figure out what to do with this main
-		App.main(null);
+		launch(args);
 	}
 
-	public static void setupGui()
+	@Override
+	public void start(Stage stage) throws Exception
+	{
+		// TODO code app
+		game = new Game(19,19);
+
+		setupGui();
+		showView(stage, game.getBoard());
+
+	}
+
+	public void setupGui()
 	{
 		// TODO maybe add more things
 		images = new ArrayList<>();
 		loadImages();
 	}
 
-	public static void showView(Stage stage, Board currentBoard)
+	public void showView(Stage stage, Board currentBoard)
 	{
 		// TODO add more to the gui
 		mainStage = stage;
@@ -57,7 +70,7 @@ public class Gui
 
 	}
 
-	public static GridPane showBoard(Board currentBoard)
+	public GridPane showBoard(Board currentBoard)
 	{
 		GridPane board = new GridPane();
 		for (int i = 0; i < currentBoard.getLenght(); i++)
@@ -65,7 +78,7 @@ public class Gui
 			for (int j = 0; j < currentBoard.getWidth(); j++)
 			{
 				Button temp = new Button();
-				temp.setPrefSize(App.BUTTON_SIZE, App.BUTTON_SIZE);
+				temp.setPrefSize(BUTTON_SIZE, BUTTON_SIZE);
 				board.add(temp, i, j);
 			}
 		}
@@ -85,7 +98,7 @@ public class Gui
 			if (piece instanceof Tile && ((Tile) piece).getStatus() == TileStatus.EMPTY)
 			{
 				// TODO add player swap
-				thisButton.setOnMouseEntered(e -> thisButton.setBackground(images.get(App.getPlayer() ? 0 : 1)));
+				thisButton.setOnMouseEntered(e -> thisButton.setBackground(images.get(game.getPlayer() ? 0 : 1)));
 				thisButton.setOnMouseExited(e -> thisButton.setBackground(images.get(2)));
 				thisButton.setOnAction(new EventHandler<ActionEvent>()
 				{
@@ -96,7 +109,7 @@ public class Gui
 
 						try
 						{
-							if (App.getPlayer())
+							if (game.getPlayer())
 								currentBoard.setStone(Color.BLACK, piece.getXPosition(), piece.getYPosition());
 							else
 								currentBoard.setStone(Color.WHITE, piece.getXPosition(), piece.getYPosition());
@@ -105,7 +118,7 @@ public class Gui
 							// TODO figure out logic for suicide
 							e.printStackTrace();
 						}
-						App.incrementTurn();
+						game.incrementTurn();
 						showBoard(currentBoard);
 
 					}
@@ -116,7 +129,7 @@ public class Gui
 		return board;
 	}
 
-	private static void loadImages()
+	private void loadImages()
 	{
 		images.add(loadBackground("goBlack.png"));
 		images.add(loadBackground("goWhite.png"));
@@ -127,8 +140,8 @@ public class Gui
 
 	private static Background loadBackground(String fileName)
 	{
-		return new Background(new BackgroundImage(new Image(fileName, App.BUTTON_SIZE, App.BUTTON_SIZE, true, true),
+		return new Background(new BackgroundImage(new Image(fileName, BUTTON_SIZE, BUTTON_SIZE, true, true),
 				BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
-				new BackgroundSize(App.BUTTON_SIZE, App.BUTTON_SIZE, true, true, true, false)));
+				new BackgroundSize(BUTTON_SIZE, BUTTON_SIZE, true, true, true, false)));
 	}
 }

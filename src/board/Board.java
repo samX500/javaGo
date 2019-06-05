@@ -60,7 +60,7 @@ public class Board
 		return xPosition == 0 || xPosition == lenght - 1 || yPosition == 0 || yPosition == width - 1;
 	}
 
-	private boolean validateSize(int lenght, int width)
+	public static boolean validateSize(int lenght, int width)
 	{
 		return lenght > 0 && width > 0;
 	}

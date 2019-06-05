@@ -9,13 +9,14 @@ import interfacePack.Killable;
 public class StoneGroup implements Killable
 {
 	List<Stone> member;
-	List<int[]> liberties = new ArrayList<>();
+	List<int[]> liberties;
 
 	public StoneGroup(Stone firstStone, Stone secondStone) throws ConstructorException
 	{
 		if (firstStone != null && secondStone != null)
 		{
 			member = new ArrayList<>();
+			liberties = new ArrayList<>();
 			addMember(firstStone);
 			addMember(secondStone);
 		} else
@@ -72,8 +73,26 @@ public class StoneGroup implements Killable
 	@Override
 	public void removeLiberties(int[] liberty)
 	{
-		liberties.remove(liberty);
+		int index = findLiberty(liberty);
+		if(index >=0)
+			liberties.remove(index);
+		
 		checkDead();
+	}
+	
+	private int findLiberty(int[] liberty)
+	{
+		int index = -1;
+
+		for (int i = 0; i < liberties.size() && index == -1; i++)
+		{
+			int[] temp = liberties.get(i);
+			if (temp[0] == liberty[0] && temp[1] == liberty[1])
+			{
+				index = i;
+			}
+		}
+		return index;
 	}
 
 	public void addMember(Stone stone)

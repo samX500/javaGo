@@ -23,4 +23,9 @@ public class Tile extends BoardPiece
 		this.status = status;
 	}
 
+	public String toString()
+	{
+		String type = getStatus()==TileStatus.EMPTY?"Empty tile at:":"Border tile at:";
+		return type + getXPosition() + " ," + getYPosition();
+	}
 }
