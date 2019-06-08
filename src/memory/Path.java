@@ -30,7 +30,8 @@ public class Path
 
 	public Path(int turn, Path previousPath) throws ConstructorException
 	{
-		if (turn >= 0 && previousPath != null)
+		//TODO maybe check if the turn make sense
+		if (turn >= 0)
 		{
 			setTurn(turn);
 			setPreviousPath(previousPath);
@@ -40,6 +41,11 @@ public class Path
 			throw new ConstructorException();
 	}
 
+	public Board getBoard(int boardAtTurn)
+	{
+		return memory.get(boardAtTurn);
+	}
+	
 	public int getTurn()
 	{
 		return turn;
@@ -62,6 +68,11 @@ public class Path
 			this.previousPath = previousPath;
 	}
 
+	public List<Path> getNode()
+	{
+		return node;
+	}
+	
 	public void saveBoard(Board board)
 	{
 		if (board != null)

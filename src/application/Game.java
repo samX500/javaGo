@@ -12,6 +12,7 @@ import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import memory.Memory;
 
 public class Game
 {
@@ -21,6 +22,7 @@ public class Game
 	public int turn;
 	public boolean isFirstPlayer;
 	public Double[] score;
+	public Memory memory;
 
 	/**
 	 * Constructor for normal game
@@ -40,6 +42,7 @@ public class Game
 			turn = 0;
 			isFirstPlayer = true;
 			score = new Double[] { 0.0, TIE_BREAKER };
+			memory = new Memory();
 		} else
 			throw new ConstructorException("Invalid board size");
 	}
@@ -55,7 +58,7 @@ public class Game
 	 * @throws SuicideException
 	 * @throws ConstructorException
 	 */
-	public Game(int lenght, int width, Double blackKomi, Double whiteKomi, Board board)
+	public Game(int lenght, int width, int blackKomi, int whiteKomi, Board board)
 			throws ConstructorException, SuicideException
 	{
 		//Not sure if it is a good practice to have a constructor where some parameter are useless
@@ -69,8 +72,8 @@ public class Game
 			
 			turn = 0;
 			isFirstPlayer = true;
-			score = new Double[] { blackKomi, whiteKomi + TIE_BREAKER };
-		
+			score = new Double[] { blackKomi+0.0, whiteKomi + TIE_BREAKER };
+			memory = new Memory();
 	}
 
 	public void incrementTurn()
@@ -102,6 +105,11 @@ public class Game
 		return score;
 	}
 	
+	public Memory getMemory()
+	{
+		return memory;
+	}
+	
 	public void setBlackScore(int score)
 	{
 		//what is the best way to cast int to Double?
@@ -113,5 +121,7 @@ public class Game
 		//what is the best way to cast int to Double?
 		this.score[1]=score+0.0;
 	}
+
+	
 
 }

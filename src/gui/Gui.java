@@ -28,6 +28,7 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import memory.Memory;
 
 public class Gui extends Application
 {
@@ -40,13 +41,14 @@ public class Gui extends Application
 	public static void main(String[] args)
 	{
 		launch(args);
+
 	}
 
 	@Override
 	public void start(Stage stage) throws Exception
 	{
 		// TODO code app
-		game = new Game(19,19);
+		game = new Game(19, 19);
 
 		setupGui();
 		showView(stage, game.getBoard());
@@ -73,6 +75,7 @@ public class Gui extends Application
 	public GridPane showBoard(Board currentBoard)
 	{
 		GridPane board = new GridPane();
+		Memory memory = game.getMemory();
 		for (int i = 0; i < currentBoard.getLenght(); i++)
 		{
 			for (int j = 0; j < currentBoard.getWidth(); j++)
@@ -106,7 +109,8 @@ public class Gui extends Application
 					@Override
 					public void handle(ActionEvent event)
 					{
-
+						memory.saveBoard(currentBoard);
+						boolean suicide = false;
 						try
 						{
 							if (game.getPlayer())
@@ -115,10 +119,10 @@ public class Gui extends Application
 								currentBoard.setStone(Color.WHITE, piece.getXPosition(), piece.getYPosition());
 						} catch (SuicideException e)
 						{
-							// TODO figure out logic for suicide
-							e.printStackTrace();
+							suicide = true;
 						}
-						game.incrementTurn();
+						if (!suicide)
+							game.incrementTurn();
 						showBoard(currentBoard);
 
 					}
