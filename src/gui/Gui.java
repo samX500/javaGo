@@ -10,6 +10,7 @@ import application.Game;
 import board.Board;
 import boardPiece.BoardPiece;
 import boardPiece.BoardPiece.*;
+import control.GoController;
 import boardPiece.Color;
 import boardPiece.Stone;
 import boardPiece.Tile;
@@ -26,22 +27,27 @@ import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import memory.Memory;
 
 public class Gui extends Application
 {
-	public static final int BUTTON_SIZE = 50;
+	public static final int BUTTON_SIZE = 30;
+	public static final int BLACK_IMAGE = 0;
+	public static final int WHITE_IMAGE = 1;
+	public static final int EMPTY_IMAGE = 2;
+	public static final int BORDER_IMAGE = 3;
 
-	private Stage mainStage;
-	private List<Background> images;
-	private Game game;
+	private static Stage mainStage;
+	private static List<Background> images;
+	private static Game game;
+	private static BorderPane display;
 
 	public static void main(String[] args)
 	{
 		launch(args);
-
 	}
 
 	@Override
@@ -51,6 +57,7 @@ public class Gui extends Application
 		game = new Game(19, 19);
 
 		setupGui();
+
 		showView(stage, game.getBoard());
 
 	}
@@ -66,71 +73,80 @@ public class Gui extends Application
 	{
 		// TODO add more to the gui
 		mainStage = stage;
-		mainStage.setTitle("Test");
-		GridPane pane = showBoard(currentBoard);
+		mainStage.setTitle("Go game");
+
+		GridPane center = makeGrid();
+		display = new BorderPane();
+
+		display.setCenter(center);
+		showBoard();
+
+		Scene scene = new Scene(display);
+		mainStage.setScene(scene);
 		mainStage.show();
 
 	}
 
-	public GridPane showBoard(Board currentBoard)
+	private GridPane makeGrid()
 	{
-		GridPane board = new GridPane();
-		Memory memory = game.getMemory();
+		GridPane pane = new GridPane();
+		Board currentBoard = game.getBoard();
+
 		for (int i = 0; i < currentBoard.getLenght(); i++)
 		{
 			for (int j = 0; j < currentBoard.getWidth(); j++)
 			{
 				Button temp = new Button();
 				temp.setPrefSize(BUTTON_SIZE, BUTTON_SIZE);
-				board.add(temp, i, j);
+				pane.add(temp, i, j);
 			}
 		}
 
-		Scene scene = new Scene(board);
-		for (int i = 0; i < board.getChildren().size(); i++)
+		return pane;
+	}
+
+	public static void showBoard()
+	{
+		// TODO try to make this better
+
+		Board currentBoard = game.getBoard();
+		GridPane pane = (GridPane) display.getCenter();
+
+		for (int i = 0; i < pane.getChildren().size(); i++)
 		{
-			Button thisButton = (Button) board.getChildren().get(i);
+			Button thisButton = (Button) pane.getChildren().get(i);
 			BoardPiece piece = currentBoard.getBoardPiece(i);
 
 			if (piece instanceof Stone)
-				thisButton.setBackground(((Stone) piece).getColor() == Color.BLACK ? images.get(0) : images.get(1));
+				thisButton.setBackground(
+						((Stone) piece).getColor() == Color.BLACK ? images.get(BLACK_IMAGE) : images.get(WHITE_IMAGE));
 			else
-				thisButton
-						.setBackground(((Tile) piece).getStatus() == TileStatus.EMPTY ? images.get(2) : images.get(3));
+				thisButton.setBackground(((Tile) piece).getStatus() == TileStatus.EMPTY ? images.get(EMPTY_IMAGE)
+						: images.get(BORDER_IMAGE));
 
 			if (piece instanceof Tile && ((Tile) piece).getStatus() == TileStatus.EMPTY)
 			{
-				// TODO add player swap
-				thisButton.setOnMouseEntered(e -> thisButton.setBackground(images.get(game.getPlayer() ? 0 : 1)));
-				thisButton.setOnMouseExited(e -> thisButton.setBackground(images.get(2)));
-				thisButton.setOnAction(new EventHandler<ActionEvent>()
-				{
-
-					@Override
-					public void handle(ActionEvent event)
-					{
-						memory.saveBoard(currentBoard);
-						boolean suicide = false;
-						try
-						{
-							if (game.getPlayer())
-								currentBoard.setStone(Color.BLACK, piece.getXPosition(), piece.getYPosition());
-							else
-								currentBoard.setStone(Color.WHITE, piece.getXPosition(), piece.getYPosition());
-						} catch (SuicideException e)
-						{
-							suicide = true;
-						}
-						if (!suicide)
-							game.incrementTurn();
-						showBoard(currentBoard);
-
-					}
-				});
+				activateButton(thisButton, new int[] { piece.getXPosition(), piece.getYPosition() });
+			} else
+			{
+				disableButton(thisButton);
 			}
 		}
-		mainStage.setScene(scene);
-		return board;
+
+	}
+
+	private static void disableButton(Button button)
+	{
+		button.setOnMouseEntered(null);
+		button.setOnMouseExited(null);
+		button.setOnAction(null);
+	}
+
+	private static void activateButton(Button button, int[] position)
+	{
+		button.setOnMouseEntered(e -> button.setBackground(images.get(game.getPlayer() ? BLACK_IMAGE : WHITE_IMAGE)));
+		button.setOnMouseExited(e -> button.setBackground(images.get(EMPTY_IMAGE)));
+		button.setOnAction(e -> GoController.placeStone(game, position));
 	}
 
 	private void loadImages()

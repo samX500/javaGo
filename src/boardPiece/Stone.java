@@ -82,6 +82,7 @@ public class Stone extends BoardPiece implements Killable
 	@Override
 	public void setALiberties(int[] liberty)
 	{
+		//TODO if in group set a liberty to group
 		if (validatePosition(liberty, getBoard()))
 			liberties.add(liberty);
 	}
@@ -205,11 +206,11 @@ public class Stone extends BoardPiece implements Killable
 			if (temp != null && temp.getColor() != getColor())
 			{
 				temp.setALiberties(getPosition());
-
 			}
 
 		}
 
+		//TODO add way to inform game the stone died
 		getBoard().setTile(TileStatus.EMPTY, getXPosition(), getYPosition());
 
 	}
