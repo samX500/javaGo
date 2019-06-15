@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.TextField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,12 +16,14 @@ import boardPiece.Color;
 import boardPiece.Stone;
 import boardPiece.Tile;
 import boardPiece.TileStatus;
+import exception.ConstructorException;
 import exception.SuicideException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -29,6 +32,7 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import memory.Memory;
 
@@ -54,17 +58,21 @@ public class Gui extends Application
 	public void start(Stage stage) throws Exception
 	{
 		// TODO code app
-		game = new Game(19, 19);
-
-		setupGui();
-
+		
+		setupGui(stage);
+		game = Menu.createGame();
 		showView(stage, game.getBoard());
 
-	}
+	}	
 
-	public void setupGui()
+	/**
+	 * Loads pictures and other elements needed for the gui
+	 */
+	public void setupGui(Stage stage)
 	{
 		// TODO maybe add more things
+		mainStage = stage;
+		mainStage.setTitle("Go game");
 		images = new ArrayList<>();
 		loadImages();
 	}
@@ -72,8 +80,7 @@ public class Gui extends Application
 	public void showView(Stage stage, Board currentBoard)
 	{
 		// TODO add more to the gui
-		mainStage = stage;
-		mainStage.setTitle("Go game");
+	
 
 		GridPane center = makeGrid();
 		display = new BorderPane();
