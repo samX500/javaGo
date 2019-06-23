@@ -21,6 +21,7 @@ import exception.SuicideException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -32,6 +33,8 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import memory.Memory;
@@ -58,12 +61,12 @@ public class Gui extends Application
 	public void start(Stage stage) throws Exception
 	{
 		// TODO code app
-		
+
 		setupGui(stage);
 		game = Menu.createGame();
 		showView(stage, game.getBoard());
 
-	}	
+	}
 
 	/**
 	 * Loads pictures and other elements needed for the gui
@@ -80,12 +83,11 @@ public class Gui extends Application
 	public void showView(Stage stage, Board currentBoard)
 	{
 		// TODO add more to the gui
-	
 
-		GridPane center = makeGrid();
 		display = new BorderPane();
 
-		display.setCenter(center);
+		display.setBottom(showMemory());
+		display.setCenter(makeGrid());
 		showBoard();
 
 		Scene scene = new Scene(display);
@@ -154,6 +156,40 @@ public class Gui extends Application
 		button.setOnMouseEntered(e -> button.setBackground(images.get(game.getPlayer() ? BLACK_IMAGE : WHITE_IMAGE)));
 		button.setOnMouseExited(e -> button.setBackground(images.get(EMPTY_IMAGE)));
 		button.setOnAction(e -> GoController.placeStone(game, position));
+	}
+
+	public static BorderPane showMemory()
+	{
+		BorderPane memoryPane = new BorderPane();
+		HBox memoryLine = new HBox();
+
+		memoryPane.setCenter(memoryLine);
+		memoryPane.setLeft(createMemoryMenu());
+
+		return memoryPane;
+	}
+
+	private static VBox createMemoryMenu()
+	{
+		VBox control = new VBox();
+
+		Button goBack = new Button("Undo");
+		goBack.setOnAction(e -> GoController.getLastBoard(game));
+
+		control.getChildren().add(goBack);
+
+		return control;
+
+	}
+
+	public static void addMemory(int turn)
+	{
+		Button newMemory = new Button("Turn " + turn);
+		((HBox) ((BorderPane) display.getBottom()).getCenter()).getChildren().add(newMemory);
+		newMemory.setOnAction(e -> GoController.getBoardAt(game, turn));
+
+		//TODO this looks autistic
+		
 	}
 
 	private void loadImages()

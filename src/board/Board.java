@@ -19,7 +19,7 @@ public class Board
 	{
 		if (validateSize(lenght, width))
 		{
-			setSize(lenght, width);
+			setSize(lenght+BORDER, width+BORDER);
 			instantiateList();
 			buildBoard();
 		}
@@ -27,6 +27,24 @@ public class Board
 		else
 			throw new ConstructorException("Invalid size");
 	}
+
+	public Board(Board board) throws ConstructorException
+	{
+		if (board != null)
+		{
+			setSize(board.lenght, board.width);
+			instantiateList();
+			for (int i = 0; i < lenght; i++)
+			{
+				for (int j = 0; j < width; j++)
+				{
+					pieces.add((i * lenght) + j,board.getBoardPiece(i, j));
+				}
+			}
+		}
+		else
+			throw new ConstructorException("board is null");
+		}
 
 	private void instantiateList()
 	{
@@ -87,8 +105,8 @@ public class Board
 
 	public void setSize(int lenght, int width)
 	{
-		setLenght(lenght + BORDER);
-		setWidth(width + BORDER);
+		setLenght(lenght);
+		setWidth(width);
 	}
 
 	public void setTile(TileStatus status, int xPosition, int yPosition)
@@ -115,13 +133,11 @@ public class Board
 
 	public BoardPiece getBoardPiece(int xPosition, int yPosition)
 	{
-		// TODO I am sure this won't work
 		return pieces.get((xPosition * lenght) + yPosition);
 	}
 
 	public BoardPiece getBoardPiece(int index)
 	{
-		// TODO not sure if this is good practice
 		return pieces.get(index);
 	}
 

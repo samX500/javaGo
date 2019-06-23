@@ -37,7 +37,7 @@ public class Game
 	{
 		if (Board.validateSize(lenght, width))
 		{
-			//TODO add memory
+			// TODO add memory
 			board = new Board(lenght, width);
 			turn = 0;
 			isFirstPlayer = true;
@@ -61,19 +61,20 @@ public class Game
 	public Game(int lenght, int width, int blackKomi, int whiteKomi, Board board)
 			throws ConstructorException, SuicideException
 	{
-		//Not sure if it is a good practice to have a constructor where some parameter are useless
-		
-			if (board != null)
-				this.board = board;
-			else if(Board.validateSize(lenght, width))
-				board = new Board(lenght, width);
-			else
-				throw new ConstructorException("Invalid size");
-			
-			turn = 0;
-			isFirstPlayer = true;
-			score = new Double[] { blackKomi+0.0, whiteKomi + TIE_BREAKER };
-			memory = new Memory();
+		// Not sure if it is a good practice to have a constructor where some parameter
+		// are useless
+
+		if (board != null)
+			this.board = board;
+		else if (Board.validateSize(lenght, width))
+			board = new Board(lenght, width);
+		else
+			throw new ConstructorException("Invalid size");
+
+		turn = 0;
+		isFirstPlayer = true;
+		score = new Double[] { blackKomi + 0.0, whiteKomi + TIE_BREAKER };
+		memory = new Memory();
 	}
 
 	public void incrementTurn()
@@ -94,34 +95,39 @@ public class Game
 	{
 		return isFirstPlayer;
 	}
-	
+
 	public Board getBoard()
 	{
 		return board;
 	}
-	
+
+	public void setBoard(Board board)
+	{
+		if (board != null)
+			this.board = board;
+	}
+
 	public Double[] getScore()
 	{
 		return score;
 	}
-	
+
 	public Memory getMemory()
 	{
 		return memory;
 	}
-	
+
 	public void setBlackScore(int score)
 	{
-		//what is the best way to cast int to Double?
-		this.score[0]=score+0.0;
-	}
-	
-	public void setWhiteScore(int score)
-	{
-		//what is the best way to cast int to Double?
-		this.score[1]=score+0.0;
+		// what is the best way to cast int to Double?
+		this.score[0] = score + 0.0;
 	}
 
+	public void setWhiteScore(int score)
+	{
+		// what is the best way to cast int to Double?
+		this.score[1] = score + 0.0;
+	}
 	
 
 }

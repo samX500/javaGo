@@ -3,54 +3,52 @@ package memory;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-
 import board.Board;
 import exception.ConstructorException;
 
 public class Memory
 {
-	private Path currentPath;
+	/**
+	 * Contains the board for each turn in this path
+	 */
+	private List<Board> memory;
 
 	public Memory() throws ConstructorException
 	{
-		// TODO check if null for first path can fuck shit up
-		currentPath = new Path(0, null);
+		this.memory = new ArrayList<>();
 	}
 
-	public Board getBoardAt(int boardAt)
+	public Board getBoard(int boardAtTurn)
 	{
-		return currentPath.getBoard(boardAt);
+		return memory.get(boardAtTurn);
+	}
+
+	public void saveBoard(Board board) 
+	{
+		if (board != null)
+			try
+			{
+				memory.add(new Board(board));
+			} catch (ConstructorException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+
+	public void removeLastBoard()
+	{
+		memory.remove(memory.size()-1);
 	}
 	
-	public void saveBoard(Board board)
+	public int getSize()
 	{
-		currentPath.saveBoard(board);
-	}
-
-	public void addPath(int creationTurn) throws ConstructorException
-	{
-		currentPath.newPath(creationTurn);
+		return memory.size();
 	}
 	
-	public Path getSourcePath()
+	public String toString()
 	{
-		// TODO Check if doing this change the address for currentPath
-		Path source = currentPath;
-		while (source.getPreviousPath() != null)
-			source = source.getPreviousPath();
-
-		return source;
+		return memory+"";
 	}
-
-	public void changePath(int[] direction)
-	{
-		// TODO test this
-		//TODO direction must contain number so that this doesn't throw arrayOutOfBound
-		currentPath = getSourcePath();
-
-		for (int i = 0; i < direction.length; i++)
-			currentPath = currentPath.getNode().get(direction[1]);
-	}
-
+	
 }

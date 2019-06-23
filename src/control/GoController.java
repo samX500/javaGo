@@ -25,11 +25,25 @@ public class GoController
 			{
 				// TODO implement suicide mechanic
 			}
+			game.memory.saveBoard(currentBoard);
+			Gui.addMemory(game.turn);
 			game.incrementTurn();
 			Gui.showBoard();
-			// showBoard(pane);
 			// TODO do something else
 		
+	}
+	
+	//TODO I need this method because the of the goBackButton, maybe I can solve this
+	public static void getLastBoard(Game game)
+	{
+		game.setBoard(game.memory.getBoard(game.memory.getSize()-2));
+		Gui.showBoard();
+	}
+	
+	public static void getBoardAt(Game game,int turn)
+	{
+		game.setBoard(game.memory.getBoard(turn));
+		Gui.showBoard();
 	}
 	
 }

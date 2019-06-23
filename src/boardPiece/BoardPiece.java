@@ -9,16 +9,15 @@ public abstract class BoardPiece
 	private Board board;
 	private int[] position;
 
-	BoardPiece(int[] position,Board board) throws ConstructorException
+	BoardPiece(int[] position, Board board) throws ConstructorException
 	{
-		if(board!=null&&validatePosition(position, board))
+		if (board != null && validatePosition(position, board))
 		{
 			setPosition(position);
 			setBoard(board);
-		}
-		else
+		} else
 			throw new ConstructorException("Position invalid");
-		}
+	}
 
 	public Board getBoard()
 	{
@@ -32,7 +31,7 @@ public abstract class BoardPiece
 
 	public void setContent()
 	{
-		//TODO
+		// TODO
 	}
 
 	public int[] getPosition()
@@ -60,9 +59,9 @@ public abstract class BoardPiece
 		return position != null && position.length != 0 && position[0] >= 0 && position[1] >= 0
 				&& position[0] < board.getLenght() && position[1] < board.getWidth();
 	}
-	
+
 	public String toString()
 	{
-		return position[0]+" ,"+position[1]+"\t:";
+		return position[0] + " ," + position[1] + "\t:";
 	}
 }
