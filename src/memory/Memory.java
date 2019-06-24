@@ -12,10 +12,16 @@ public class Memory
 	 * Contains the board for each turn in this path
 	 */
 	private List<Board> memory;
+	
+	/**
+	 * Contains the score for each turn
+	 */
+	private List<Double[]> scoreMemory;
 
 	public Memory() throws ConstructorException
 	{
 		this.memory = new ArrayList<>();
+		this.scoreMemory = new ArrayList<>();
 	}
 
 	public Board getBoard(int boardAtTurn)

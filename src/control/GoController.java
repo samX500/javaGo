@@ -13,7 +13,7 @@ public class GoController
 			Board currentBoard = game.getBoard();
 			try
 			{
-				if (game.getPlayer())
+				if (game.isBlack())
 				{
 					currentBoard.setStone(Color.BLACK, position[0],position[1]);
 				} else
@@ -34,8 +34,9 @@ public class GoController
 	}
 	
 	//TODO I need this method because the of the goBackButton, maybe I can solve this
-	public static void getLastBoard(Game game)
+	public static void undo(Game game)
 	{
+		
 		game.setBoard(game.memory.getBoard(game.memory.getSize()-2));
 		Gui.showBoard();
 	}

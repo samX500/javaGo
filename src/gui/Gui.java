@@ -153,7 +153,7 @@ public class Gui extends Application
 
 	private static void activateButton(Button button, int[] position)
 	{
-		button.setOnMouseEntered(e -> button.setBackground(images.get(game.getPlayer() ? BLACK_IMAGE : WHITE_IMAGE)));
+		button.setOnMouseEntered(e -> button.setBackground(images.get(game.isBlack() ? BLACK_IMAGE : WHITE_IMAGE)));
 		button.setOnMouseExited(e -> button.setBackground(images.get(EMPTY_IMAGE)));
 		button.setOnAction(e -> GoController.placeStone(game, position));
 	}
@@ -174,7 +174,7 @@ public class Gui extends Application
 		VBox control = new VBox();
 
 		Button goBack = new Button("Undo");
-		goBack.setOnAction(e -> GoController.getLastBoard(game));
+		goBack.setOnAction(e -> GoController.undo(game));
 
 		control.getChildren().add(goBack);
 

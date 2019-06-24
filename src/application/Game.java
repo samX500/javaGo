@@ -20,7 +20,7 @@ public class Game
 
 	public Board board;
 	public int turn;
-	public boolean isFirstPlayer;
+	//TODO do things with score
 	public Double[] score;
 	public Memory memory;
 
@@ -39,8 +39,7 @@ public class Game
 		{
 			// TODO add memory
 			board = new Board(lenght, width);
-			turn = 0;
-			isFirstPlayer = true;
+			turn = 1;
 			score = new Double[] { 0.0, TIE_BREAKER };
 			memory = new Memory();
 		} else
@@ -71,8 +70,7 @@ public class Game
 		else
 			throw new ConstructorException("Invalid size");
 
-		turn = 0;
-		isFirstPlayer = true;
+		turn = 1;
 		score = new Double[] { blackKomi + 0.0, whiteKomi + TIE_BREAKER };
 		memory = new Memory();
 	}
@@ -80,10 +78,6 @@ public class Game
 	public void incrementTurn()
 	{
 		turn++;
-		if (isFirstPlayer)
-			isFirstPlayer = false;
-		else
-			isFirstPlayer = true;
 	}
 
 	public int getTurn()
@@ -91,9 +85,9 @@ public class Game
 		return turn;
 	}
 
-	public boolean getPlayer()
+	public boolean isBlack()
 	{
-		return isFirstPlayer;
+		return turn % 2 != 0;
 	}
 
 	public Board getBoard()
@@ -129,5 +123,9 @@ public class Game
 		this.score[1] = score + 0.0;
 	}
 	
+	public void setScores(int[] scores)
+	{
+		
+	}
 
 }
