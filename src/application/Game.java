@@ -3,8 +3,7 @@ package application;
 import java.util.List;
 
 import board.Board;
-import boardPiece.Color;
-import boardPiece.TileStatus;
+import boardPiece.Stone.Color;
 import exception.ConstructorException;
 import exception.SuicideException;
 import gui.Gui;
@@ -13,17 +12,21 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import memory.Memory;
+import smallStuff.Player;
+import smallStuff.Turn;
 
 public class Game
 {
 	private static final Double TIE_BREAKER = 0.5;
 
 	private Board board;
-	private int turn;
-	// TODO do things with score
-	private Double[] score;
+	private Turn turn;
 	private Memory memory;
-
+	
+	// TODO implement scoring mechanic
+	private Player player1;
+	private Player player2;
+	
 	/**
 	 * Constructor for normal game
 	 * 
@@ -39,9 +42,11 @@ public class Game
 		{
 			// TODO add memory
 			board = new Board(lenght, width);
-			turn = 0;
-			score = new Double[] { 0.0, TIE_BREAKER };
+			turn = new Turn();
 			memory = new Memory();
+			player1 = new Player();
+			player2 = new Player();
+			
 		} else
 			throw new ConstructorException("Invalid board size");
 	}
@@ -70,17 +75,18 @@ public class Game
 		else
 			throw new ConstructorException("Invalid size");
 
-		turn = 0;
-		score = new Double[] { blackKomi + 0.0, whiteKomi + TIE_BREAKER };
+		turn = new Turn();
+		player1 = new Player();
+		player2 = new Player();
 		memory = new Memory();
 	}
 
 	public void incrementTurn()
 	{
-		turn++;
+		turn.increase();
 	}
 
-	public int getTurn()
+	public Turn getTurn()
 	{
 		return turn;
 	}
@@ -88,12 +94,12 @@ public class Game
 	public void setTurn(int newturn)
 	{
 		if (newturn > 0)
-			turn = newturn;
+			turn.setTurn(newturn);
 	}
 
 	public boolean isBlack()
 	{
-		return turn % 2 == 0;
+		return turn.getTurn() % 2 == 0;
 	}
 
 	public Board getBoard()
@@ -107,32 +113,34 @@ public class Game
 			this.board = board;
 	}
 
-	public Double[] getScore()
+	public int getScore1()
 	{
-		return score;
+		return player1.getScore().getScore();
+	}
+	
+	public int getScore2()
+	{
+		return player2.getScore().getScore();
+	}
+
+	public void setScore1(int score)
+	{
+		player1.getScore().setScore(score);
+	}
+	
+	public void setScore2(int score)
+	{
+		player2.getScore().setScore(score);
+	}
+
+	public void setScores(int score1,int score2)
+	{
+		player1.getScore().setScore(score1);
+		player2.getScore().setScore(score2);
 	}
 
 	public Memory getMemory()
 	{
 		return memory;
 	}
-
-	public void setBlackScore(int score)
-	{
-		// what is the best way to cast int to Double?
-		this.score[0] = score + 0.0;
-	}
-
-	public void setWhiteScore(int score)
-	{
-		// what is the best way to cast int to Double?
-		this.score[1] = score + 0.0;
-	}
-
-	public void setScores(int[] scores)
-	{
-		score[0] = (double) scores[0];
-		score[1] = scores[1] + TIE_BREAKER;
-	}
-
 }

@@ -4,21 +4,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import board.Board;
+import boardPiece.Tile.TileStatus;
 import exception.ConstructorException;
 import exception.SuicideException;
 import interfacePack.Killable;
+import smallStuff.Position;
 
 public class Stone extends BoardPiece implements Killable
 {
+	public enum Color
+	{
+		BLACK, WHITE
+	};
+
 	private StoneGroup currentGroup;
 	private Color color;
 
-	List<int[]> liberties;
+	List<Position> liberties;
 	private BoardPiece[] neighbours;
 
-	public Stone(Color color, int[] position, Board board) throws ConstructorException, SuicideException
+	public Stone(Color color, int x, int y, Board board) throws ConstructorException, SuicideException
 	{
-		super(position, board);
+		super(x, y, board);
 		liberties = new ArrayList<>();
 		setColor(color);
 		generateNeighbours();
@@ -52,7 +59,7 @@ public class Stone extends BoardPiece implements Killable
 
 	private void addNeighbours(Stone newNeighbours)
 	{
-		int index = validateNeighbours(newNeighbours.getPosition());
+		int index = validateNeighbours(newNeighbours.getXPosition(), newNeighbours.getYPosition());
 		if (index >= 0)
 		{
 			neighbours[index] = newNeighbours;
@@ -60,30 +67,30 @@ public class Stone extends BoardPiece implements Killable
 		}
 	}
 
-	private int validateNeighbours(int[] position)
+	private int validateNeighbours(int x, int y)
 	{
-		if (position[0] == getXPosition() + 1 && position[1] == getYPosition())
+		if (x == getXPosition() + 1 && y == getYPosition())
 			return 0;
-		else if (position[0] == getXPosition() - 1 && position[1] == getYPosition())
+		else if (x == getXPosition() - 1 && y == getYPosition())
 			return 1;
-		else if (position[0] == getXPosition() && position[1] == getYPosition() + 1)
+		else if (x == getXPosition() && y == getYPosition() + 1)
 			return 2;
-		else if (position[0] == getXPosition() && position[1] == getYPosition() - 1)
+		else if (x == getXPosition() && y == getYPosition() - 1)
 			return 3;
 		return -1;
 	}
 
 	@Override
-	public List<int[]> getLiberties()
+	public List<Position> getLiberties()
 	{
 		return liberties;
 	}
 
 	@Override
-	public void setALiberties(int[] liberty)
+	public void setALiberties(Position liberty)
 	{
-		//TODO if in group set a liberty to group
-		if (validatePosition(liberty, getBoard()))
+		// TODO if in group set a liberty to group
+		if (validatePosition(liberty.getX(), liberty.getY(), getBoard()))
 			liberties.add(liberty);
 	}
 
@@ -97,7 +104,6 @@ public class Stone extends BoardPiece implements Killable
 				setALiberties(status.getPosition());
 			}
 		}
-
 	}
 
 	@Override
@@ -164,30 +170,14 @@ public class Stone extends BoardPiece implements Killable
 	}
 
 	@Override
-	public void removeLiberties(int[] liberty)
+	public void removeLiberties(Position liberty)
 	{
 		if (isInGroup())
 			getGroup().removeLiberties(liberty);
+		else
+			liberties.remove(liberty);
 
-		int index = findLiberty(liberty);
-		if (index >= 0)
-			liberties.remove(index);
 		checkDead();
-	}
-
-	private int findLiberty(int[] liberty)
-	{
-		int index = -1;
-
-		for (int i = 0; i < liberties.size() && index == -1; i++)
-		{
-			int[] temp = liberties.get(i);
-			if (temp[0] == liberty[0] && temp[1] == liberty[1])
-			{
-				index = i;
-			}
-		}
-		return index;
 	}
 
 	public void checkDead()
@@ -207,10 +197,8 @@ public class Stone extends BoardPiece implements Killable
 			{
 				temp.setALiberties(getPosition());
 			}
-
 		}
 
-		//TODO add way to inform game the stone died
 		getBoard().setTile(TileStatus.EMPTY, getXPosition(), getYPosition());
 
 	}

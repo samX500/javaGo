@@ -3,17 +3,18 @@ package boardPiece;
 import board.Board;
 import exception.ConstructorException;
 import exception.SuicideException;
+import smallStuff.Position;
 
 public abstract class BoardPiece
 {
 	private Board board;
-	private int[] position;
+	private Position position;
 
-	BoardPiece(int[] position, Board board) throws ConstructorException
+	BoardPiece(int x, int y, Board board) throws ConstructorException
 	{
-		if (board != null && validatePosition(position, board))
+		if (board != null && validatePosition(x, y, board))
 		{
-			setPosition(position);
+			position = new Position(x, y);
 			setBoard(board);
 		} else
 			throw new ConstructorException("Position invalid");
@@ -29,34 +30,44 @@ public abstract class BoardPiece
 		this.board = board;
 	}
 
-	public int[] getPosition()
+	public Position getPosition()
 	{
 		return position;
 	}
 
 	public int getXPosition()
 	{
-		return position[0];
+		return position.getX();
 	}
 
 	public int getYPosition()
 	{
-		return position[1];
+		return position.getY();
 	}
 
-	public void setPosition(int[] position)
+	public void setXPosition(int x)
 	{
-		this.position = position;
+		this.position.setX(x);
 	}
 
-	public boolean validatePosition(int[] position, Board board)
+	public void setYPosition(int y)
 	{
-		return position != null && position.length != 0 && position[0] >= 0 && position[1] >= 0
-				&& position[0] < board.getLenght() && position[1] < board.getWidth();
+		this.position.setY(y);
+	}
+
+	public void setPositions(int x, int y)
+	{
+		this.position.setX(x);
+		this.position.setY(y);
+	}
+
+	public boolean validatePosition(int x, int y, Board board)
+	{
+		return x >= 0 && y >= 0 && x < board.getLenght() && y < board.getWidth();
 	}
 
 	public String toString()
 	{
-		return position[0] + " ," + position[1] + "\t:";
+		return position.getX() + " ," + position.getY() + "\t:";
 	}
 }

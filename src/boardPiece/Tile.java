@@ -5,14 +5,19 @@ import exception.ConstructorException;
 
 public class Tile extends BoardPiece
 {
+	public enum TileStatus
+	{
+		EMPTY, BORDER
+	}
+
 	private TileStatus status;
 
-	public Tile(TileStatus status, int[] position, Board board) throws ConstructorException
+	public Tile(TileStatus status, int x, int y, Board board) throws ConstructorException
 	{
-		super(position, board);
+		super(x, y, board);
 		setStatus(status);
 	}
-	
+
 	public TileStatus getStatus()
 	{
 		return status;
@@ -25,7 +30,7 @@ public class Tile extends BoardPiece
 
 	public String toString()
 	{
-		String type = getStatus()==TileStatus.EMPTY?"Empty tile at:":"Border tile at:";
+		String type = getStatus() == TileStatus.EMPTY ? "Empty tile at:" : "Border tile at:";
 		return type + getXPosition() + " ," + getYPosition();
 	}
 }

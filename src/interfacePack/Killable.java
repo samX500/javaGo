@@ -3,16 +3,18 @@ package interfacePack;
 import java.util.ArrayList;
 import java.util.List;
 
+import smallStuff.Position;
+
 public interface Killable
 {
 	 
-	 List<int[]> getLiberties();
+	 List<Position> getLiberties();
 	 
-	 void setALiberties(int[] liberty);
+	 void setALiberties(Position liberty);
 	 
 	 void generateLiberties();
 	 
-	 void removeLiberties(int[] liberty);
+	 void removeLiberties(Position liberty);
 	 
 	 void checkDead();
 	 

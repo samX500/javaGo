@@ -1,6 +1,8 @@
 package board;
 
 import boardPiece.*;
+import boardPiece.Stone.Color;
+import boardPiece.Tile.TileStatus;
 import exception.ConstructorException;
 import exception.SuicideException;
 import javafx.scene.layout.GridPane;
@@ -60,9 +62,9 @@ public class Board
 				try
 				{
 					if (isBorder(i, j))
-						pieces.add((i * lenght) + j, new Tile(TileStatus.BORDER, new int[] { i, j }, this));
+						pieces.add((i * lenght) + j, new Tile(TileStatus.BORDER, i, j, this));
 					else
-						pieces.add((i * lenght) + j, new Tile(TileStatus.EMPTY, new int[] { i, j }, this));
+						pieces.add((i * lenght) + j, new Tile(TileStatus.EMPTY, i, j, this));
 				} catch (ConstructorException e)
 				{
 					e.printStackTrace();
@@ -112,7 +114,7 @@ public class Board
 	{
 		try
 		{
-			pieces.set((xPosition * lenght) + yPosition, new Tile(status, new int[] { xPosition, yPosition }, this));
+			pieces.set((xPosition * lenght) + yPosition, new Tile(status, xPosition, yPosition, this));
 		} catch (ConstructorException e)
 		{
 			e.printStackTrace();
@@ -123,7 +125,7 @@ public class Board
 	{
 		try
 		{
-			pieces.set((xPosition * lenght) + yPosition, new Stone(color, new int[] { xPosition, yPosition }, this));
+			pieces.set((xPosition * lenght) + yPosition, new Stone(color, xPosition, yPosition, this));
 		} catch (ConstructorException e)
 		{
 			e.printStackTrace();

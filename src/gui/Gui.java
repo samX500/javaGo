@@ -12,10 +12,10 @@ import board.Board;
 import boardPiece.BoardPiece;
 import boardPiece.BoardPiece.*;
 import control.GoController;
-import boardPiece.Color;
+import boardPiece.Stone.Color;
 import boardPiece.Stone;
 import boardPiece.Tile;
-import boardPiece.TileStatus;
+import boardPiece.Tile.TileStatus;
 import exception.ConstructorException;
 import exception.SuicideException;
 import javafx.application.Application;
@@ -38,6 +38,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import memory.Memory;
+import smallStuff.Position;
+import smallStuff.Turn;
 
 public class Gui extends Application
 {
@@ -135,7 +137,7 @@ public class Gui extends Application
 
 			if (piece instanceof Tile && ((Tile) piece).getStatus() == TileStatus.EMPTY)
 			{
-				activateButton(thisButton, new int[] { piece.getXPosition(), piece.getYPosition() });
+				activateButton(thisButton, piece.getPosition());
 			} else
 			{
 				disableButton(thisButton);
@@ -151,7 +153,7 @@ public class Gui extends Application
 		button.setOnAction(null);
 	}
 
-	private static void activateButton(Button button, int[] position)
+	private static void activateButton(Button button, Position position)
 	{
 		button.setOnMouseEntered(e -> button.setBackground(images.get(game.isBlack() ? BLACK_IMAGE : WHITE_IMAGE)));
 		button.setOnMouseExited(e -> button.setBackground(images.get(EMPTY_IMAGE)));
@@ -182,11 +184,11 @@ public class Gui extends Application
 
 	}
 
-	public static void addMemory(int turn)
+	public static void addMemory(Turn turn)
 	{
-		Button newMemory = new Button("Turn " + (turn + 1));
+		Button newMemory = new Button("" + turn);
 		((HBox) ((BorderPane) display.getBottom()).getCenter()).getChildren().add(newMemory);
-		newMemory.setOnAction(e -> GoController.getBoardAt(game, turn));
+		newMemory.setOnAction(e -> GoController.getBoardAt(game, turn.getTurn()));
 
 		// TODO this looks autistic
 	}

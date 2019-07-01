@@ -2,13 +2,15 @@ package control;
 
 import application.Game;
 import board.Board;
-import boardPiece.Color;
+import boardPiece.Stone.Color;
 import exception.SuicideException;
 import gui.Gui;
+import smallStuff.Position;
+import smallStuff.Turn;
 
 public class GoController
 {
-	public static void placeStone(Game game, int[] position)
+	public static void placeStone(Game game, Position position)
 	{
 		Board currentBoard = game.getBoard();
 		if (TurnButton.isActive())
@@ -21,10 +23,10 @@ public class GoController
 		{
 			if (game.isBlack())
 			{
-				currentBoard.setStone(Color.BLACK, position[0], position[1]);
+				currentBoard.setStone(Color.BLACK, position.getX(), position.getY());
 			} else
 			{
-				currentBoard.setStone(Color.WHITE, position[0], position[1]);
+				currentBoard.setStone(Color.WHITE, position.getX(), position.getY());
 			}
 
 		} catch (SuicideException error)
@@ -44,7 +46,7 @@ public class GoController
 	public static void undo(Game game)
 	{
 		game.setBoard(game.getMemory().getBoard(game.getMemory().getSize() - 2));
-		resetTo(game, game.getTurn());
+		resetTo(game, game.getTurn().getTurn());
 		Gui.showBoard();
 	}
 
@@ -57,12 +59,11 @@ public class GoController
 
 	public static void resetTo(Game game, int turn)
 	{
-		while (game.getMemory().getSize() > turn+1)
+		while (game.getMemory().getSize() > turn)
 		{
-			System.out.println(game.getMemory().getSize()+"   "+turn);
-			game.setTurn(game.getTurn()-1);
+			game.setTurn(game.getTurn().getTurn()-1);
 			game.getMemory().removeLastBoard();
-			Gui.removeMemory(game.getTurn());
+			Gui.removeMemory(game.getTurn().getTurn()-1);
 		}
 	}
 

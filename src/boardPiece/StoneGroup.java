@@ -5,11 +5,12 @@ import java.util.List;
 
 import exception.ConstructorException;
 import interfacePack.Killable;
+import smallStuff.Position;
 
 public class StoneGroup implements Killable
 {
 	List<Stone> member;
-	List<int[]> liberties;
+	List<Position> liberties;
 
 	public StoneGroup(Stone firstStone, Stone secondStone) throws ConstructorException
 	{
@@ -26,18 +27,18 @@ public class StoneGroup implements Killable
 	}
 
 	@Override
-	public List<int[]> getLiberties()
+	public List<Position> getLiberties()
 	{
 		return liberties;
 	}
 
 	@Override
-	public void setALiberties(int[] liberty)
+	public void setALiberties(Position liberty)
 	{
 		liberties.add(liberty);
 	}
 
-	public void setLiberties(List<int[]> liberty)
+	public void setLiberties(List<Position> liberty)
 	{
 		if (liberty != null)
 			liberties.addAll(liberty);
@@ -71,29 +72,14 @@ public class StoneGroup implements Killable
 	}
 
 	@Override
-	public void removeLiberties(int[] liberty)
+	public void removeLiberties(Position liberty)
 	{
-		int index = findLiberty(liberty);
-		if(index >=0)
-			liberties.remove(index);
-		
+
+		liberties.remove(liberty);
+
 		checkDead();
 	}
-	
-	private int findLiberty(int[] liberty)
-	{
-		int index = -1;
 
-		for (int i = 0; i < liberties.size() && index == -1; i++)
-		{
-			int[] temp = liberties.get(i);
-			if (temp[0] == liberty[0] && temp[1] == liberty[1])
-			{
-				index = i;
-			}
-		}
-		return index;
-	}
 
 	public void addMember(Stone stone)
 	{
