@@ -29,11 +29,6 @@ public abstract class BoardPiece
 		this.board = board;
 	}
 
-	public void setContent()
-	{
-		// TODO
-	}
-
 	public int[] getPosition()
 	{
 		return position;

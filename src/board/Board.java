@@ -19,7 +19,7 @@ public class Board
 	{
 		if (validateSize(lenght, width))
 		{
-			setSize(lenght+BORDER, width+BORDER);
+			setSize(lenght + BORDER, width + BORDER);
 			instantiateList();
 			buildBoard();
 		}
@@ -38,13 +38,12 @@ public class Board
 			{
 				for (int j = 0; j < width; j++)
 				{
-					pieces.add((i * lenght) + j,board.getBoardPiece(i, j));
+					pieces.add((i * lenght) + j, board.getBoardPiece(i, j));
 				}
 			}
-		}
-		else
+		} else
 			throw new ConstructorException("board is null");
-		}
+	}
 
 	private void instantiateList()
 	{

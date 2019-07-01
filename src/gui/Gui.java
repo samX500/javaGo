@@ -184,12 +184,16 @@ public class Gui extends Application
 
 	public static void addMemory(int turn)
 	{
-		Button newMemory = new Button("Turn " + turn);
+		Button newMemory = new Button("Turn " + (turn + 1));
 		((HBox) ((BorderPane) display.getBottom()).getCenter()).getChildren().add(newMemory);
 		newMemory.setOnAction(e -> GoController.getBoardAt(game, turn));
 
-		//TODO this looks autistic
-		
+		// TODO this looks autistic
+	}
+
+	public static void removeMemory(int turn)
+	{
+		((HBox) ((BorderPane) display.getBottom()).getCenter()).getChildren().remove(turn);
 	}
 
 	private void loadImages()

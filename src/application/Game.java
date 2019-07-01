@@ -18,11 +18,11 @@ public class Game
 {
 	private static final Double TIE_BREAKER = 0.5;
 
-	public Board board;
-	public int turn;
-	//TODO do things with score
-	public Double[] score;
-	public Memory memory;
+	private Board board;
+	private int turn;
+	// TODO do things with score
+	private Double[] score;
+	private Memory memory;
 
 	/**
 	 * Constructor for normal game
@@ -39,7 +39,7 @@ public class Game
 		{
 			// TODO add memory
 			board = new Board(lenght, width);
-			turn = 1;
+			turn = 0;
 			score = new Double[] { 0.0, TIE_BREAKER };
 			memory = new Memory();
 		} else
@@ -70,7 +70,7 @@ public class Game
 		else
 			throw new ConstructorException("Invalid size");
 
-		turn = 1;
+		turn = 0;
 		score = new Double[] { blackKomi + 0.0, whiteKomi + TIE_BREAKER };
 		memory = new Memory();
 	}
@@ -85,9 +85,15 @@ public class Game
 		return turn;
 	}
 
+	public void setTurn(int newturn)
+	{
+		if (newturn > 0)
+			turn = newturn;
+	}
+
 	public boolean isBlack()
 	{
-		return turn % 2 != 0;
+		return turn % 2 == 0;
 	}
 
 	public Board getBoard()
@@ -122,10 +128,11 @@ public class Game
 		// what is the best way to cast int to Double?
 		this.score[1] = score + 0.0;
 	}
-	
+
 	public void setScores(int[] scores)
 	{
-		
+		score[0] = (double) scores[0];
+		score[1] = scores[1] + TIE_BREAKER;
 	}
 
 }
