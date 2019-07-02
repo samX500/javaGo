@@ -30,7 +30,7 @@ public class Board
 			throw new ConstructorException("Invalid size");
 	}
 
-	public Board(Board board) throws ConstructorException
+	public Board(Board board) 
 	{
 		if (board != null)
 		{
@@ -43,8 +43,7 @@ public class Board
 					pieces.add((i * lenght) + j, board.getBoardPiece(i, j));
 				}
 			}
-		} else
-			throw new ConstructorException("board is null");
+		} 
 	}
 
 	private void instantiateList()

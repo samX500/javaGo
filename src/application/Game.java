@@ -1,16 +1,8 @@
 package application;
 
-import java.util.List;
-
 import board.Board;
-import boardPiece.Stone.Color;
 import exception.ConstructorException;
 import exception.SuicideException;
-import gui.Gui;
-import javafx.application.Application;
-import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import memory.Memory;
 import smallStuff.Player;
 import smallStuff.Turn;

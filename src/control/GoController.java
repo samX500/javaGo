@@ -6,7 +6,6 @@ import boardPiece.Stone.Color;
 import exception.SuicideException;
 import gui.Gui;
 import smallStuff.Position;
-import smallStuff.Turn;
 
 public class GoController
 {
@@ -37,7 +36,6 @@ public class GoController
 		Gui.addMemory(game.getTurn());
 		game.incrementTurn();
 		Gui.showBoard();
-		// TODO do something else
 
 	}
 
@@ -45,7 +43,7 @@ public class GoController
 	// this
 	public static void undo(Game game)
 	{
-		game.setBoard(game.getMemory().getBoard(game.getMemory().getSize() - 2));
+		game.setBoard(game.getMemory().getBoard(game.getMemory().getSize() - 1));
 		resetTo(game, game.getTurn().getTurn());
 		Gui.showBoard();
 	}
@@ -59,11 +57,11 @@ public class GoController
 
 	public static void resetTo(Game game, int turn)
 	{
-		while (game.getMemory().getSize() > turn)
+		while (game.getMemory().getSize()-1 > turn)
 		{
 			game.setTurn(game.getTurn().getTurn()-1);
 			game.getMemory().removeLastBoard();
-			Gui.removeMemory(game.getTurn().getTurn()-1);
+			Gui.removeMemory(game.getTurn().getTurn());
 		}
 	}
 

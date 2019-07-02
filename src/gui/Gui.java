@@ -1,30 +1,23 @@
 package gui;
 
-import java.awt.TextField;
+import javafx.scene.control.ScrollPane;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.sun.org.apache.bcel.internal.generic.LALOAD;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 import application.Game;
 import board.Board;
 import boardPiece.BoardPiece;
-import boardPiece.BoardPiece.*;
 import control.GoController;
 import boardPiece.Stone.Color;
 import boardPiece.Stone;
 import boardPiece.Tile;
 import boardPiece.Tile.TileStatus;
-import exception.ConstructorException;
-import exception.SuicideException;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Parent;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -35,9 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import memory.Memory;
 import smallStuff.Position;
 import smallStuff.Turn;
 
@@ -75,7 +66,6 @@ public class Gui extends Application
 	 */
 	public void setupGui(Stage stage)
 	{
-		// TODO maybe add more things
 		mainStage = stage;
 		mainStage.setTitle("Go game");
 		images = new ArrayList<>();
@@ -84,8 +74,6 @@ public class Gui extends Application
 
 	public void showView(Stage stage, Board currentBoard)
 	{
-		// TODO add more to the gui
-
 		display = new BorderPane();
 
 		display.setBottom(showMemory());
@@ -118,8 +106,6 @@ public class Gui extends Application
 
 	public static void showBoard()
 	{
-		// TODO try to make this better
-
 		Board currentBoard = game.getBoard();
 		GridPane pane = (GridPane) display.getCenter();
 
@@ -164,8 +150,9 @@ public class Gui extends Application
 	{
 		BorderPane memoryPane = new BorderPane();
 		HBox memoryLine = new HBox();
+		ScrollPane scroll = new ScrollPane(memoryLine);
 
-		memoryPane.setCenter(memoryLine);
+		memoryPane.setCenter(scroll);
 		memoryPane.setLeft(createMemoryMenu());
 
 		return memoryPane;
@@ -177,7 +164,6 @@ public class Gui extends Application
 
 		Button goBack = new Button("Undo");
 		goBack.setOnAction(e -> GoController.undo(game));
-
 		control.getChildren().add(goBack);
 
 		return control;
@@ -187,15 +173,19 @@ public class Gui extends Application
 	public static void addMemory(Turn turn)
 	{
 		Button newMemory = new Button("" + turn);
-		((HBox) ((BorderPane) display.getBottom()).getCenter()).getChildren().add(newMemory);
-		newMemory.setOnAction(e -> GoController.getBoardAt(game, turn.getTurn()));
-
-		// TODO this looks autistic
+		getMemoryLine().add(newMemory);
+		int newTurn = turn.getTurn();
+		newMemory.setOnAction(e -> GoController.getBoardAt(game, newTurn));
 	}
 
 	public static void removeMemory(int turn)
 	{
-		((HBox) ((BorderPane) display.getBottom()).getCenter()).getChildren().remove(turn);
+		getMemoryLine().remove(turn);
+	}
+
+	public static ObservableList<Node> getMemoryLine()
+	{
+		return ((HBox) ((ScrollPane) ((BorderPane) display.getBottom()).getCenter()).getContent()).getChildren();
 	}
 
 	private void loadImages()
@@ -204,13 +194,14 @@ public class Gui extends Application
 		images.add(loadBackground("goWhite.png"));
 		images.add(loadBackground("emptyTile.jpg"));
 		images.add(loadBackground("borderTile.jpg"));
-
 	}
 
 	private static Background loadBackground(String fileName)
 	{
-		return new Background(new BackgroundImage(new Image(fileName, BUTTON_SIZE, BUTTON_SIZE, true, true),
-				BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
-				new BackgroundSize(BUTTON_SIZE, BUTTON_SIZE, true, true, true, false)));
+		Image image = new Image(fileName, BUTTON_SIZE, BUTTON_SIZE, true, true);
+		BackgroundSize backgroundSize = new BackgroundSize(BUTTON_SIZE, BUTTON_SIZE, true, true, true, false);
+		BackgroundImage background = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+				BackgroundPosition.CENTER, backgroundSize);
+		return new Background(background);
 	}
 }

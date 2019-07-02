@@ -12,11 +12,11 @@ public class Memory
 	 * Contains the board for each turn in this path
 	 */
 	private List<Board> memory;
-	
+
 	/**
 	 * Contains the score for each turn
 	 */
-	private List<Double[]> scoreMemory;
+	private List<int[]> scoreMemory;
 
 	public Memory() throws ConstructorException
 	{
@@ -26,35 +26,31 @@ public class Memory
 
 	public Board getBoard(int boardAtTurn)
 	{
-		return memory.get(boardAtTurn);
+
+		return new Board(memory.get(boardAtTurn));
+
 	}
 
-	public void saveBoard(Board board) 
+	public void saveBoard(Board board)
 	{
 		if (board != null)
-			try
-			{
-				memory.add(new Board(board));
-			} catch (ConstructorException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			memory.add(new Board(board));
+
 	}
 
 	public void removeLastBoard()
 	{
-		memory.remove(memory.size()-1);
+		memory.remove(memory.size() - 1);
 	}
-	
+
 	public int getSize()
 	{
 		return memory.size();
 	}
-	
+
 	public String toString()
 	{
-		return memory+"";
+		return memory + "";
 	}
-	
+
 }
