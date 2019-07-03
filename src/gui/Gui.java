@@ -35,6 +35,7 @@ import smallStuff.Turn;
 public class Gui extends Application
 {
 	public static final int BUTTON_SIZE = 30;
+			
 	public static final int BLACK_IMAGE = 0;
 	public static final int WHITE_IMAGE = 1;
 	public static final int EMPTY_IMAGE = 2;
@@ -53,12 +54,9 @@ public class Gui extends Application
 	@Override
 	public void start(Stage stage) throws Exception
 	{
-		// TODO code app
-
 		setupGui(stage);
 		game = Menu.createGame();
 		showView(stage, game.getBoard());
-
 	}
 
 	/**

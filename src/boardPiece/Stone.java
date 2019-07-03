@@ -19,7 +19,6 @@ public class Stone extends BoardPiece implements Killable
 
 	private StoneGroup currentGroup;
 	private Color color;
-
 	List<Position> liberties;
 	private BoardPiece[] neighbours;
 
@@ -199,14 +198,23 @@ public class Stone extends BoardPiece implements Killable
 			}
 		}
 
+		//TODO find a way to make the stone die without getBoard()
 		getBoard().setTile(TileStatus.EMPTY, getXPosition(), getYPosition());
 
 	}
+	
 
 	public String toString()
 	{
 		String color = getColor() == Color.BLACK ? "Black" : "White";
 		String isGroup = isInGroup() ? " is in a group" : " isn't in a group";
 		return color + " stone at:" + getXPosition() + " ," + getYPosition() + isGroup;
+	}
+
+	@Override
+	public BoardPiece clonePiece(BoardPiece piece)
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

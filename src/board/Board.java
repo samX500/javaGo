@@ -6,6 +6,7 @@ import boardPiece.Tile.TileStatus;
 import exception.ConstructorException;
 import exception.SuicideException;
 import javafx.scene.layout.GridPane;
+import smallStuff.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class Board
 			throw new ConstructorException("Invalid size");
 	}
 
-	public Board(Board board) 
+	public Board(Board board)
 	{
 		if (board != null)
 		{
@@ -40,10 +41,12 @@ public class Board
 			{
 				for (int j = 0; j < width; j++)
 				{
+					// TODO check if the pieces in the new board still have a pointer to the old
+					// board
 					pieces.add((i * lenght) + j, board.getBoardPiece(i, j));
 				}
 			}
-		} 
+		}
 	}
 
 	private void instantiateList()

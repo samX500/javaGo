@@ -66,6 +66,8 @@ public abstract class BoardPiece
 		return x >= 0 && y >= 0 && x < board.getLenght() && y < board.getWidth();
 	}
 
+	public abstract BoardPiece clonePiece(BoardPiece piece);
+	
 	public String toString()
 	{
 		return position.getX() + " ," + position.getY() + "\t:";

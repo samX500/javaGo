@@ -28,9 +28,18 @@ public class Tile extends BoardPiece
 		this.status = status;
 	}
 
+	@Override
+	public BoardPiece clonePiece(BoardPiece piece)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public String toString()
 	{
 		String type = getStatus() == TileStatus.EMPTY ? "Empty tile at:" : "Border tile at:";
 		return type + getXPosition() + " ," + getYPosition();
 	}
+
+	
 }
