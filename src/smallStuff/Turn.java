@@ -14,6 +14,11 @@ public class Turn
 	{
 		setTurn(0);
 	}
+	
+	public Turn(int turn)
+	{
+		setTurn(turn);
+	}
 
 	public int getTurn()
 	{

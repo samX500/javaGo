@@ -24,6 +24,12 @@ public class Position
 		setY(y);
 	}
 
+	public Position(Position position)
+	{
+		setX(position.getX());
+		setY(position.getY());
+	}
+
 	public int getX()
 	{
 		return x;
@@ -54,6 +60,6 @@ public class Position
 
 	public String toString()
 	{
-		return "X: " + x + "\tY: " + y;
+		return "X: " + x + " Y: " + y;
 	}
 }

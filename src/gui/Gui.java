@@ -34,7 +34,7 @@ import smallStuff.Turn;
 
 public class Gui extends Application
 {
-	public static final int BUTTON_SIZE = 30;
+	public static final int BUTTON_SIZE = 35;
 			
 	public static final int BLACK_IMAGE = 0;
 	public static final int WHITE_IMAGE = 1;
@@ -54,15 +54,15 @@ public class Gui extends Application
 	@Override
 	public void start(Stage stage) throws Exception
 	{
-		setupGui(stage);
+		loadAssets(stage);
 		game = Menu.createGame();
-		showView(stage, game.getBoard());
+		setupGui(stage, game.getBoard());
 	}
 
 	/**
 	 * Loads pictures and other elements needed for the gui
 	 */
-	public void setupGui(Stage stage)
+	public void loadAssets(Stage stage)
 	{
 		mainStage = stage;
 		mainStage.setTitle("Go game");
@@ -70,13 +70,13 @@ public class Gui extends Application
 		loadImages();
 	}
 
-	public void showView(Stage stage, Board currentBoard)
+	public void setupGui(Stage stage, Board currentBoard)
 	{
 		display = new BorderPane();
 
-		display.setBottom(showMemory());
+		display.setBottom(setupMemory());
 		display.setCenter(makeGrid());
-		showBoard();
+		showView();
 
 		Scene scene = new Scene(display);
 		mainStage.setScene(scene);
@@ -98,10 +98,16 @@ public class Gui extends Application
 				pane.add(temp, i, j);
 			}
 		}
-
+		pane.setMinSize(BUTTON_SIZE*currentBoard.getLenght(), BUTTON_SIZE*currentBoard.getWidth());
 		return pane;
 	}
 
+	public static void showView()
+	{
+		showBoard();
+		showMemory();
+	}
+	
 	public static void showBoard()
 	{
 		Board currentBoard = game.getBoard();
@@ -144,7 +150,7 @@ public class Gui extends Application
 		button.setOnAction(e -> GoController.placeStone(game, position));
 	}
 
-	public static BorderPane showMemory()
+	public static BorderPane setupMemory()
 	{
 		BorderPane memoryPane = new BorderPane();
 		HBox memoryLine = new HBox();
@@ -168,6 +174,14 @@ public class Gui extends Application
 
 	}
 
+	public static void showMemory()
+	{
+		//TODO ask will if this is a good idea
+		getMemoryLine().clear();
+		for(int i = 0; i <= game.getTurn().getTurn();i++)
+			addMemory(new Turn(i));
+	}
+	
 	public static void addMemory(Turn turn)
 	{
 		Button newMemory = new Button("" + turn);

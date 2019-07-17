@@ -12,18 +12,20 @@ public class StoneGroup implements Killable
 	List<Stone> member;
 	List<Position> liberties;
 
-	public StoneGroup(Stone firstStone, Stone secondStone) throws ConstructorException
+	public StoneGroup(Stone firstStone, Stone secondStone)
 	{
-		if (firstStone != null && secondStone != null)
-		{
-			member = new ArrayList<>();
-			liberties = new ArrayList<>();
-			addMember(firstStone);
-			addMember(secondStone);
-		} else
-		{
-			throw new ConstructorException("Issue trying to create a new stoneGroup");
-		}
+		member = new ArrayList<>();
+		liberties = new ArrayList<>();
+		addMember(firstStone);
+		addMember(secondStone);
+	}
+	
+	public StoneGroup(StoneGroup group)
+	{
+		List<Stone> newMember = group.getMember();
+		List<Position> newLiberties = group.getLiberties();
+		
+		
 	}
 
 	@Override
@@ -77,9 +79,8 @@ public class StoneGroup implements Killable
 
 		liberties.remove(liberty);
 
-		checkDead();
+		// checkDead();
 	}
-
 
 	public void addMember(Stone stone)
 	{

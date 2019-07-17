@@ -35,7 +35,7 @@ public class Game
 			// TODO add memory
 			board = new Board(lenght, width);
 			turn = new Turn();
-			memory = new Memory();
+			memory = new Memory(lenght,width);
 			player1 = new Player();
 			player2 = new Player();
 			
@@ -70,7 +70,7 @@ public class Game
 		turn = new Turn();
 		player1 = new Player();
 		player2 = new Player();
-		memory = new Memory();
+		memory = new Memory(lenght,width);
 	}
 
 	public void incrementTurn()

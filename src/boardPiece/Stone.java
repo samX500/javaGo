@@ -22,19 +22,18 @@ public class Stone extends BoardPiece implements Killable
 	List<Position> liberties;
 	private BoardPiece[] neighbours;
 
-	public Stone(Color color, int x, int y, Board board) throws ConstructorException, SuicideException
+	public Stone(Color color, int x, int y)
 	{
-		super(x, y, board);
+		super(x, y);
 		liberties = new ArrayList<>();
 		setColor(color);
-		generateNeighbours();
+	}
+
+	public void activateStone(Board board)
+	{
+		generateNeighbours(board);
 		generateLiberties();
 		updateNeighbours();
-		if (isDead())
-		{
-			dies();
-			throw new SuicideException("Stone dies at the same times it's played");
-		}
 	}
 
 	public Color getColor()
@@ -47,13 +46,13 @@ public class Stone extends BoardPiece implements Killable
 		this.color = color;
 	}
 
-	private void generateNeighbours()
+	private void generateNeighbours(Board board)
 	{
 		neighbours = new BoardPiece[4];
-		neighbours[0] = getBoard().getBoardPiece(getXPosition() + 1, getYPosition());
-		neighbours[1] = getBoard().getBoardPiece(getXPosition() - 1, getYPosition());
-		neighbours[2] = getBoard().getBoardPiece(getXPosition(), getYPosition() + 1);
-		neighbours[3] = getBoard().getBoardPiece(getXPosition(), getYPosition() - 1);
+		neighbours[0] = board.getBoardPiece(getXPosition() + 1, getYPosition());
+		neighbours[1] = board.getBoardPiece(getXPosition() - 1, getYPosition());
+		neighbours[2] = board.getBoardPiece(getXPosition(), getYPosition() + 1);
+		neighbours[3] = board.getBoardPiece(getXPosition(), getYPosition() - 1);
 	}
 
 	private void addNeighbours(Stone newNeighbours)
@@ -89,8 +88,7 @@ public class Stone extends BoardPiece implements Killable
 	public void setALiberties(Position liberty)
 	{
 		// TODO if in group set a liberty to group
-		if (validatePosition(liberty.getX(), liberty.getY(), getBoard()))
-			liberties.add(liberty);
+		liberties.add(liberty);
 	}
 
 	@Override
@@ -113,7 +111,7 @@ public class Stone extends BoardPiece implements Killable
 		return liberties.isEmpty();
 	}
 
-	private void findGroup(Stone stone) throws ConstructorException
+	private void findGroup(Stone stone)
 	{
 		if (stone != null)
 		{
@@ -130,11 +128,10 @@ public class Stone extends BoardPiece implements Killable
 					new StoneGroup(this, stone);
 
 			}
-
 		}
 	}
 
-	public void updateNeighbours() throws ConstructorException
+	public void updateNeighbours()
 	{
 		for (BoardPiece status : neighbours)
 		{
@@ -148,7 +145,6 @@ public class Stone extends BoardPiece implements Killable
 			{
 				temp.addNeighbours(this);
 			}
-
 		}
 	}
 
@@ -175,8 +171,6 @@ public class Stone extends BoardPiece implements Killable
 			getGroup().removeLiberties(liberty);
 		else
 			liberties.remove(liberty);
-
-		checkDead();
 	}
 
 	public void checkDead()
@@ -197,12 +191,7 @@ public class Stone extends BoardPiece implements Killable
 				temp.setALiberties(getPosition());
 			}
 		}
-
-		//TODO find a way to make the stone die without getBoard()
-		getBoard().setTile(TileStatus.EMPTY, getXPosition(), getYPosition());
-
 	}
-	
 
 	public String toString()
 	{
@@ -211,10 +200,4 @@ public class Stone extends BoardPiece implements Killable
 		return color + " stone at:" + getXPosition() + " ," + getYPosition() + isGroup;
 	}
 
-	@Override
-	public BoardPiece clonePiece(BoardPiece piece)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

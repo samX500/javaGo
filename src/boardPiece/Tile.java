@@ -12,9 +12,9 @@ public class Tile extends BoardPiece
 
 	private TileStatus status;
 
-	public Tile(TileStatus status, int x, int y, Board board) throws ConstructorException
+	public Tile(TileStatus status, int x, int y) 
 	{
-		super(x, y, board);
+		super(x, y);
 		setStatus(status);
 	}
 
@@ -28,18 +28,10 @@ public class Tile extends BoardPiece
 		this.status = status;
 	}
 
-	@Override
-	public BoardPiece clonePiece(BoardPiece piece)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	public String toString()
 	{
 		String type = getStatus() == TileStatus.EMPTY ? "Empty tile at:" : "Border tile at:";
 		return type + getXPosition() + " ," + getYPosition();
 	}
 
-	
 }
