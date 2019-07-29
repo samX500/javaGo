@@ -9,6 +9,7 @@ import application.Game;
 import board.Board;
 import boardPiece.BoardPiece;
 import control.GoController;
+import control.TurnButton;
 import boardPiece.Stone.Color;
 import boardPiece.Stone;
 import boardPiece.Tile;
@@ -35,7 +36,7 @@ import smallStuff.Turn;
 public class Gui extends Application
 {
 	public static final int BUTTON_SIZE = 35;
-			
+
 	public static final int BLACK_IMAGE = 0;
 	public static final int WHITE_IMAGE = 1;
 	public static final int EMPTY_IMAGE = 2;
@@ -98,7 +99,7 @@ public class Gui extends Application
 				pane.add(temp, i, j);
 			}
 		}
-		pane.setMinSize(BUTTON_SIZE*currentBoard.getLenght(), BUTTON_SIZE*currentBoard.getWidth());
+		pane.setMinSize(BUTTON_SIZE * currentBoard.getLenght(), BUTTON_SIZE * currentBoard.getWidth());
 		return pane;
 	}
 
@@ -107,7 +108,7 @@ public class Gui extends Application
 		showBoard();
 		showMemory();
 	}
-	
+
 	public static void showBoard()
 	{
 		Board currentBoard = game.getBoard();
@@ -133,7 +134,6 @@ public class Gui extends Application
 				disableButton(thisButton);
 			}
 		}
-
 	}
 
 	private static void disableButton(Button button)
@@ -145,7 +145,10 @@ public class Gui extends Application
 
 	private static void activateButton(Button button, Position position)
 	{
-		button.setOnMouseEntered(e -> button.setBackground(images.get(game.isBlack() ? BLACK_IMAGE : WHITE_IMAGE)));
+
+		boolean isBlack = TurnButton.isActive() ? TurnButton.getTurn() % 2 == 0 : game.isBlack();
+
+		button.setOnMouseEntered(e -> button.setBackground(images.get(isBlack ? BLACK_IMAGE : WHITE_IMAGE)));
 		button.setOnMouseExited(e -> button.setBackground(images.get(EMPTY_IMAGE)));
 		button.setOnAction(e -> GoController.placeStone(game, position));
 	}
@@ -167,6 +170,7 @@ public class Gui extends Application
 		VBox control = new VBox();
 
 		Button goBack = new Button("Undo");
+		goBack.setPrefHeight(BUTTON_SIZE);
 		goBack.setOnAction(e -> GoController.undo(game));
 		control.getChildren().add(goBack);
 
@@ -176,23 +180,18 @@ public class Gui extends Application
 
 	public static void showMemory()
 	{
-		//TODO ask will if this is a good idea
 		getMemoryLine().clear();
-		for(int i = 0; i <= game.getTurn().getTurn();i++)
+		for (int i = 0; i <= game.getTurn().getTurn(); i++)
 			addMemory(new Turn(i));
 	}
-	
+
 	public static void addMemory(Turn turn)
 	{
 		Button newMemory = new Button("" + turn);
+		newMemory.setPrefHeight(BUTTON_SIZE);
 		getMemoryLine().add(newMemory);
 		int newTurn = turn.getTurn();
 		newMemory.setOnAction(e -> GoController.getBoardAt(game, newTurn));
-	}
-
-	public static void removeMemory(int turn)
-	{
-		getMemoryLine().remove(turn);
 	}
 
 	public static ObservableList<Node> getMemoryLine()

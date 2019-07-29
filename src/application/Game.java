@@ -107,28 +107,12 @@ public class Game
 
 	public int getScore1()
 	{
-		return player1.getScore().getScore();
+		return 0;
 	}
 	
 	public int getScore2()
 	{
-		return player2.getScore().getScore();
-	}
-
-	public void setScore1(int score)
-	{
-		player1.getScore().setScore(score);
-	}
-	
-	public void setScore2(int score)
-	{
-		player2.getScore().setScore(score);
-	}
-
-	public void setScores(int score1,int score2)
-	{
-		player1.getScore().setScore(score1);
-		player2.getScore().setScore(score2);
+		return 0;
 	}
 
 	public Memory getMemory()

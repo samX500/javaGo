@@ -17,7 +17,13 @@ import java.util.Stack;
 
 public class Board
 {
+	public enum Direction
+	{
+		Left, Right, Top, Bottom
+	}
+
 	public static final int BORDER = 2;
+
 	private List<BoardPiece> pieces;
 	private Dimension dimension;
 
@@ -37,6 +43,7 @@ public class Board
 			// TODO check the case where the move is null (player passed)
 			setStone(move.getColor(), move.getPosition().getX(), move.getPosition().getY());
 		}
+
 	}
 
 	private void instantiateList()
@@ -61,7 +68,6 @@ public class Board
 
 	private boolean isBorder(int xPosition, int yPosition)
 	{
-		// TODO find a better way to do -1
 		return xPosition == 0 || xPosition == dimension.getLenght() - 1 || yPosition == 0
 				|| yPosition == dimension.getWidth() - 1;
 	}
@@ -119,6 +125,43 @@ public class Board
 		return pieces.get(index);
 	}
 
+	public BoardPiece getNeighbours(Position position, Direction direction)
+	{
+		switch (direction)
+		{
+		case Left:
+			return getBoardPiece(position.getX() - 1, position.getY());
+		case Right:
+			return getBoardPiece(position.getX() + 1, position.getY());
+		case Top:
+			return getBoardPiece(position.getX(), position.getY() - 1);
+		case Bottom:
+			return getBoardPiece(position.getX(), position.getY() + 1);
+		}
+
+		return null;
+	}
+
+	public BoardPiece getLeft(Position position)
+	{
+		return getBoardPiece(position.getX() - 1, position.getY());
+	}
+
+	public BoardPiece getRight(Position position)
+	{
+		return getBoardPiece(position.getX() + 1, position.getY());
+	}
+
+	public BoardPiece getTop(Position position)
+	{
+		return getBoardPiece(position.getX(), position.getY() - 1);
+	}
+
+	public BoardPiece getBottom(Position position)
+	{
+		return getBoardPiece(position.getX(), position.getY() + 1);
+	}
+
 	public void removeDeadPieces()
 	{
 		for (BoardPiece stone : pieces)
@@ -126,11 +169,19 @@ public class Board
 			if (stone instanceof Stone && ((Stone) stone).isDead())
 			{
 				((Stone) stone).dies();
-				{
-					System.out.println("something is wrong");
+
 				this.setTile(TileStatus.EMPTY, stone.getXPosition(), stone.getYPosition());
-				}
 			}
 		}
+	}
+
+	public int countTerritory(Color color)
+	{
+		return 0;
+	}
+
+	public void checkTerritory(Color color)
+	{
+
 	}
 }

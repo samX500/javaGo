@@ -59,11 +59,7 @@ public class Memory
 
 	public Board getLastBoard()
 	{
-		doMemory.push(undoMemory.pop());
-		Board board = new Board(stackOpperation.reverseStack(stackOpperation.cloneStack(undoMemory)), dimension);
-		undoMemory.push(doMemory.pop());
-
-		return board;
+		return getBoard(this.getSize());
 	}
 
 	public void saveMove(Position position, Color piece)
@@ -73,7 +69,6 @@ public class Memory
 
 	public void removeLastMove()
 	{
-		System.out.println("Removed" + undoMemory.peek());
 		undoMemory.pop();
 	}
 

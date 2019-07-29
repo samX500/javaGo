@@ -12,7 +12,6 @@ public class GoController
 {
 	public static void placeStone(Game game, Position position)
 	{
-		System.out.println(game.getTurn());
 		if (TurnButton.isActive())
 		{
 			resetTo(game, TurnButton.getTurn());
@@ -29,11 +28,8 @@ public class GoController
 		currentBoard.removeDeadPieces();
 
 		game.getMemory().saveMove(position, game.isBlack() ? Color.BLACK : Color.WHITE);
-		//Gui.addMemory(game.getTurn());
 		game.incrementTurn();
 		Gui.showView();
-		
-		System.out.println(game.getMemory());
 	}
 
 	public static void undo(Game game)
@@ -44,6 +40,7 @@ public class GoController
 
 	public static void getBoardAt(Game game, int turn)
 	{
+		//TODO find a good way to deActivate if turn == game.getTurn();
 		game.setBoard(game.getMemory().getBoard(turn));
 		TurnButton.setActive(turn);
 		Gui.showView();
@@ -51,11 +48,8 @@ public class GoController
 
 	public static void resetTo(Game game, int turn)
 	{
-		//TODO check out the >
 		while (game.getMemory().getSize() - 1 >= turn)
 			backATurn(game);
-		
-		Gui.showView();
 	}
 
 	public static void backATurn(Game game)
@@ -63,8 +57,6 @@ public class GoController
 		game.getMemory().removeLastMove();
 		game.setBoard(game.getMemory().getLastBoard());
 		game.setTurn(game.getTurn().getTurn() - 1);
-		Gui.removeMemory(game.getTurn().getTurn());
-	
 	}
 
 }

@@ -1,15 +1,19 @@
 package boardPiece;
 
-import board.Board;
-import exception.ConstructorException;
-
 public class Tile extends BoardPiece
 {
+	
 	public enum TileStatus
 	{
 		EMPTY, BORDER
 	}
+	
+	public enum Owner
+	{
+		NOT_OWNED, WHITE_OWNED, BLACK_OWNED
+	}
 
+	private Owner owner;
 	private TileStatus status;
 
 	public Tile(TileStatus status, int x, int y) 
@@ -27,6 +31,8 @@ public class Tile extends BoardPiece
 	{
 		this.status = status;
 	}
+	
+	//TODO add some method to deal with owningship
 
 	public String toString()
 	{

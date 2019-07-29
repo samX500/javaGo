@@ -3,32 +3,32 @@ package smallStuff;
 public class Player
 {
 	/**
-	 * Represent the score of the player
+	 * Represent the capture of the player
 	 */
-	private Score score;
+	private Capture capture;
 
 	// TODO maybe add a name if needed
 
 	/**
-	 * Creates a new player and set it's score to 0
+	 * Creates a new player and set it's capture to 0
 	 */
 	public Player()
 	{
-		score = new Score(0);
+		capture = new Capture(0);
 	}
 
-	public Player(int score)
+	public Player(int capture)
 	{
-		this.score = new Score(score);
+		this.capture = new Capture(capture);
 	}
 
-	public Score getScore()
+	public Capture getCapture()
 	{
-		return score;
+		return capture;
 	}
 
 	public String toString()
 	{
-		return "player has " + score + " points";
+		return "player has " + capture + " captures";
 	}
 }
