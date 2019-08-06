@@ -10,7 +10,6 @@ import board.Board;
 import boardPiece.BoardPiece;
 import control.GoController;
 import control.TurnButton;
-import boardPiece.Stone.Color;
 import boardPiece.Stone;
 import boardPiece.Tile;
 import boardPiece.Tile.TileStatus;
@@ -30,8 +29,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import smallStuff.Position;
-import smallStuff.Turn;
+import smallStuff.*;
 
 public class Gui extends Application
 {
@@ -57,6 +55,7 @@ public class Gui extends Application
 	{
 		loadAssets(stage);
 		game = Menu.createGame();
+
 		setupGui(stage, game.getBoard());
 	}
 
@@ -121,7 +120,7 @@ public class Gui extends Application
 
 			if (piece instanceof Stone)
 				thisButton.setBackground(
-						((Stone) piece).getColor() == Color.BLACK ? images.get(BLACK_IMAGE) : images.get(WHITE_IMAGE));
+						((Stone) piece).getColor() == Color.black ? images.get(BLACK_IMAGE) : images.get(WHITE_IMAGE));
 			else
 				thisButton.setBackground(((Tile) piece).getStatus() == TileStatus.EMPTY ? images.get(EMPTY_IMAGE)
 						: images.get(BORDER_IMAGE));
@@ -170,10 +169,16 @@ public class Gui extends Application
 		VBox control = new VBox();
 
 		Button goBack = new Button("Undo");
+		Button countPoint = new Button("Count territory");
 		goBack.setPrefHeight(BUTTON_SIZE);
+		countPoint.setPrefHeight(BUTTON_SIZE);
+		
 		goBack.setOnAction(e -> GoController.undo(game));
+		countPoint.setOnAction(e-> GoController.countPoint(game));
+		
 		control.getChildren().add(goBack);
-
+		control.getChildren().add(countPoint);
+		
 		return control;
 
 	}

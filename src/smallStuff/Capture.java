@@ -5,7 +5,7 @@ public class Capture
 	/**
 	 * Integer that represent the amount of capture taken
 	 */
-	int CaptureNum;
+	int capture;
 
 	public Capture()
 	{
@@ -19,12 +19,17 @@ public class Capture
 
 	public int getCapture()
 	{
-		return CaptureNum;
+		return capture;
 	}
 
 	public void setCapture(int capture)
 	{
-		CaptureNum = capture;
+		this.capture = capture;
+	}
+
+	public void addCapture()
+	{
+		capture++;
 	}
 	
 }

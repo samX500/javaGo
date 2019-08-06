@@ -6,11 +6,8 @@ import java.util.Stack;
 
 import board.Board;
 import boardPiece.BoardPiece;
-import boardPiece.Stone.Color;
 import exception.ConstructorException;
-import smallStuff.Dimension;
-import smallStuff.Position;
-import smallStuff.stackOpperation;
+import smallStuff.*;
 
 public class Memory
 {
@@ -21,20 +18,20 @@ public class Memory
 	private Stack<Move> undoMemory;
 
 	/**
-	 * Contains the score for each turn
+	 * List containing the players. To calculate points
 	 */
-	private List<int[]> scoreMemory;
+	private Player[] players;
 
 	/**
 	 * Dimension of the board this memory operate
 	 */
 	private Dimension dimension;
 
-	public Memory(int lenght, int width) throws ConstructorException
+	public Memory(int lenght, int width,Player[] players) throws ConstructorException
 	{
 		this.undoMemory = new Stack<>();
 		this.doMemory = new Stack<>();
-		this.scoreMemory = new ArrayList<>();
+		this.players = players;
 		dimension = new Dimension(lenght, width);
 	}
 
@@ -49,7 +46,7 @@ public class Memory
 		while (undoMemory.size() > turn)
 			doMemory.push(undoMemory.pop());
 
-		Board board = new Board(stackOpperation.reverseStack(stackOpperation.cloneStack(undoMemory)),dimension);
+		Board board = new Board(stackOpperation.reverseStack(stackOpperation.cloneStack(undoMemory)),dimension,players);
 
 		while (!doMemory.isEmpty())
 			undoMemory.push(doMemory.pop());

@@ -49,4 +49,6 @@ public abstract class BoardPiece
 	{
 		return position.getX() + " ," + position.getY() + "\t:";
 	}
+	
+	public abstract boolean equals(BoardPiece piece);
 }

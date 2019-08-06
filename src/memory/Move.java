@@ -1,9 +1,8 @@
 package memory;
 
 import boardPiece.BoardPiece;
-import boardPiece.Stone.Color;
-import smallStuff.Position;
-import smallStuff.Turn;
+import smallStuff.*;
+
 
 public class Move
 {

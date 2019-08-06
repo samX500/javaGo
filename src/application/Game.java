@@ -28,16 +28,16 @@ public class Game
 	 * @throws SuicideException
 	 * @throws ConstructorException
 	 */
-	public Game(int lenght, int width) throws ConstructorException, SuicideException
+	public Game(int lenght, int width) throws ConstructorException
 	{
 		if (Board.validateSize(lenght, width))
 		{
 			// TODO add memory
 			board = new Board(lenght, width);
 			turn = new Turn();
-			memory = new Memory(lenght,width);
 			player1 = new Player();
 			player2 = new Player();
+			memory = new Memory(lenght,width,new Player[] {player1,player2});
 			
 		} else
 			throw new ConstructorException("Invalid board size");
@@ -70,7 +70,7 @@ public class Game
 		turn = new Turn();
 		player1 = new Player();
 		player2 = new Player();
-		memory = new Memory(lenght,width);
+		memory = new Memory(lenght,width,new Player[] {player1,player2});
 	}
 
 	public void incrementTurn()
@@ -83,6 +83,21 @@ public class Game
 		return turn;
 	}
 
+	public Player getPlayer1()
+	{
+		return player1;
+	}
+
+	public Player getPlayer2()
+	{
+		return player2;
+	}
+	
+	public Player[] getPlayers()
+	{
+		return new Player[] {player1,player2};
+	}
+	
 	public void setTurn(int newturn)
 	{
 		if (newturn > 0)
@@ -105,15 +120,16 @@ public class Game
 			this.board = board;
 	}
 
-	public int getScore1()
+	public int[] getScore()
 	{
-		return 0;
+		int[] scores = board.countTerritory();
+		
+		scores[0]+= player1.getCapture();
+		scores[1]+= player2.getCapture();
+		
+		return scores;
 	}
 	
-	public int getScore2()
-	{
-		return 0;
-	}
 
 	public Memory getMemory()
 	{

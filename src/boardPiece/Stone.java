@@ -8,15 +8,12 @@ import boardPiece.Tile.TileStatus;
 import exception.ConstructorException;
 import exception.SuicideException;
 import interfacePack.Killable;
+import smallStuff.Color;
+import smallStuff.Direction;
 import smallStuff.Position;
 
 public class Stone extends BoardPiece implements Killable
 {
-	public enum Color
-	{
-		BLACK, WHITE
-	};
-
 	private StoneGroup currentGroup;
 	private Color color;
 	List<Position> liberties;
@@ -46,13 +43,34 @@ public class Stone extends BoardPiece implements Killable
 		this.color = color;
 	}
 
+	public BoardPiece[] getNeighbours()
+	{
+		return neighbours;
+	}
+
+	public BoardPiece getNeighbours(Direction direction)
+	{
+		switch (direction)
+		{
+		case Right:
+			return neighbours[0];
+		case Left:
+			return neighbours[1];
+		case Top:
+			return neighbours[2];
+		case Bottom:
+			return neighbours[3];
+		}
+		return null;
+	}
+
 	private void generateNeighbours(Board board)
 	{
 		neighbours = new BoardPiece[4];
-		neighbours[0] = board.getBoardPiece(getXPosition() + 1, getYPosition());
-		neighbours[1] = board.getBoardPiece(getXPosition() - 1, getYPosition());
-		neighbours[2] = board.getBoardPiece(getXPosition(), getYPosition() + 1);
-		neighbours[3] = board.getBoardPiece(getXPosition(), getYPosition() - 1);
+		neighbours[0] = board.getNeighbours(getPosition(), Direction.Right);
+		neighbours[1] = board.getNeighbours(getPosition(), Direction.Left);
+		neighbours[2] = board.getNeighbours(getPosition(), Direction.Top);
+		neighbours[3] = board.getNeighbours(getPosition(), Direction.Bottom);
 	}
 
 	private void addNeighbours(Stone newNeighbours)
@@ -67,6 +85,7 @@ public class Stone extends BoardPiece implements Killable
 
 	private int validateNeighbours(int x, int y)
 	{
+		// TODO modify this a bit
 		if (x == getXPosition() + 1 && y == getYPosition())
 			return 0;
 		else if (x == getXPosition() - 1 && y == getYPosition())
@@ -138,8 +157,8 @@ public class Stone extends BoardPiece implements Killable
 			Stone temp = status instanceof Stone ? (Stone) status : null;
 			if (temp != null && temp.getColor() == getColor())
 			{
-				findGroup(temp);
 				temp.addNeighbours(this);
+				findGroup(temp);
 
 			} else if (temp != null)
 			{
@@ -169,8 +188,8 @@ public class Stone extends BoardPiece implements Killable
 	{
 		if (isInGroup())
 			getGroup().removeLiberties(liberty);
-		else
-			liberties.remove(liberty);
+
+		liberties.remove(liberty);
 	}
 
 	public void checkDead()
@@ -195,9 +214,16 @@ public class Stone extends BoardPiece implements Killable
 
 	public String toString()
 	{
-		String color = getColor() == Color.BLACK ? "Black" : "White";
+		String color = getColor() == Color.black ? "Black" : "White";
 		String isGroup = isInGroup() ? " is in a group" : " isn't in a group";
 		return color + " stone at:" + getXPosition() + " ," + getYPosition() + isGroup;
+	}
+
+	@Override
+	public boolean equals(BoardPiece piece)
+	{
+		return piece instanceof Stone && this.getPosition().equals(piece.getPosition())
+				&& this.getColor() == ((Stone) piece).getColor();
 	}
 
 }

@@ -22,9 +22,19 @@ public class Player
 		this.capture = new Capture(capture);
 	}
 
-	public Capture getCapture()
+	public int getCapture()
 	{
-		return capture;
+		return capture.getCapture();
+	}
+	
+	public void setCapture(int capture)
+	{
+		this.capture.setCapture(capture);
+	}
+	
+	public void addCapture()
+	{
+		this.capture.addCapture();
 	}
 
 	public String toString()

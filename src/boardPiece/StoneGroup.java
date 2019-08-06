@@ -19,14 +19,6 @@ public class StoneGroup implements Killable
 		addMember(firstStone);
 		addMember(secondStone);
 	}
-	
-	public StoneGroup(StoneGroup group)
-	{
-		List<Stone> newMember = group.getMember();
-		List<Position> newLiberties = group.getLiberties();
-		
-		
-	}
 
 	@Override
 	public List<Position> getLiberties()
@@ -76,10 +68,7 @@ public class StoneGroup implements Killable
 	@Override
 	public void removeLiberties(Position liberty)
 	{
-
 		liberties.remove(liberty);
-
-		// checkDead();
 	}
 
 	public void addMember(Stone stone)
@@ -103,7 +92,6 @@ public class StoneGroup implements Killable
 		{
 			for (Stone stone : group.getMember())
 				addMember(stone);
-			group.endGroup();
 		}
 	}
 
