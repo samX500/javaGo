@@ -1,14 +1,14 @@
 package board;
 
 import boardPiece.*;
-import boardPiece.Tile.TileStatus;
+import boardPiece.BoardPiece.TileStatus;
 import exception.ConstructorException;
 import exception.SuicideException;
+import gui.Gui;
+import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import memory.Move;
 import smallStuff.*;
-import smallStuff.Dimension;
-import smallStuff.Position;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -55,12 +55,12 @@ public class Board
 		{
 			Move move = moveStack.pop();
 			// TODO check the case where the move is null (player passed)
-			setStone(move.getColor(), move.getPosition().getX(), move.getPosition().getY());
+			setBoardPiece(move.getColor(), TileStatus.STONE, move.getPosition().getX(), move.getPosition().getY());
 
 			if (i > 1)
 			{
 				KOBoard[i] = clone(this);
-				this.removeDeadPieces(players, move.getPosition(), KOBoard[i - 2]);
+				this.checkDeadPiece(players, move.getPosition(), KOBoard[i - 2]);
 			} else
 				KOBoard[i] = null;
 			i++;
@@ -70,7 +70,7 @@ public class Board
 
 	private static Board clone(Board board)
 	{
-		Board clone = new Board(board.getLenght(), board.getWidth());
+		Board clone = new Board(board.getLenght() - BORDER, board.getWidth() - BORDER);
 
 		for (int i = 0; i < board.getLenght(); i++)
 		{
@@ -78,10 +78,7 @@ public class Board
 			{
 				BoardPiece piece = board.getBoardPiece((i * board.getLenght()) + j);
 
-				if (piece instanceof Tile)
-					clone.setTile(((Tile) piece).getStatus(), i, j);
-				else if (piece instanceof Stone)
-					clone.setStone(((Stone) piece).getColor(), i, j);
+				clone.setBoardPiece(piece.getColor(), piece.getStatus(), i, j);
 			}
 		}
 
@@ -95,15 +92,16 @@ public class Board
 
 	private void buildBoard()
 	{
-
 		for (int i = 0; i < dimension.getLenght(); i++)
 		{
 			for (int j = 0; j < dimension.getWidth(); j++)
 			{
 				if (isBorder(i, j))
-					pieces.add((i * dimension.getLenght()) + j, new Tile(TileStatus.BORDER, i, j));
+					pieces.add((i * dimension.getLenght()) + j,
+							new BoardPiece(i, j, Color.colorless, TileStatus.BORDER));
 				else
-					pieces.add((i * dimension.getLenght()) + j, new Tile(TileStatus.EMPTY, i, j));
+					pieces.add((i * dimension.getLenght()) + j,
+							new BoardPiece(i, j, Color.colorless, TileStatus.EMPTY));
 			}
 		}
 	}
@@ -150,16 +148,10 @@ public class Board
 		return dimension;
 	}
 
-	public void setTile(TileStatus status, int xPosition, int yPosition)
+	public void setBoardPiece(Color color, TileStatus status, int xPosition, int yPosition)
 	{
-		pieces.set((xPosition * dimension.getLenght()) + yPosition, new Tile(status, xPosition, yPosition));
-	}
-
-	public void setStone(Color color, int xPosition, int yPosition)
-	{
-		Stone stone = new Stone(color, xPosition, yPosition);
-		pieces.set((xPosition * dimension.getLenght()) + yPosition, stone);
-		stone.activateStone(this);
+		pieces.set((xPosition * dimension.getLenght()) + yPosition,
+				new BoardPiece(xPosition, yPosition, color, status));
 	}
 
 	public BoardPiece getBoardPiece(int xPosition, int yPosition)
@@ -194,50 +186,99 @@ public class Board
 		return null;
 	}
 
-	public boolean removeDeadPieces(Player[] players, Position position, Board board)
+	public boolean checkDeadPiece(Player[] players, Position position, Board koBoard)
 	{
-		Stone thisStone = position == null ? null : (Stone) getBoardPiece(position);
-		if (thisStone != null && thisStone.isDead())
-			return checkKO(thisStone, players, board);
+		List<BoardPiece> victims = new ArrayList<>();
+		BoardPiece stone = getBoardPiece(position);
 
-		else
-			for (BoardPiece stone : pieces)
-				if (stone instanceof Stone && ((Stone) stone).isDead())
-					killStone((Stone) stone, players);
+		if (stoneIsDead(stone, victims))
+			return checkKO(stone, players, koBoard);
+
+		for (int i = 0; i < Direction.values().length; i++)
+		{
+			BoardPiece piece = getNeighbours(position, Direction.values()[i]);
+			if (stoneIsDead(piece, victims))
+				for (BoardPiece victim : victims)
+					killStone(victim, players);
+		}
 
 		return false;
 	}
 
-	private boolean checkKO(Stone stone, Player[] players, Board board)
+	private boolean checkKO(BoardPiece stone, Player[] players, Board koBoard)
 	{
-		boolean suicide = true;
+		List<BoardPiece> victims = new ArrayList<>();
 
-		for (BoardPiece piece : stone.getNeighbours())
+		for (int i = 0; i < Direction.values().length; i++)
 		{
-			if (piece instanceof Stone && ((Stone) piece).getColor() != stone.getColor() && ((Stone) piece).isDead())
+			BoardPiece piece = getNeighbours(stone.getPosition(), Direction.values()[i]);
+			if (stoneIsDead(piece, victims))
 			{
-				if (!this.equals(board))
+				Board testEqual = clone(this);
+				for (BoardPiece victim : victims)
+					testEqual.setBoardPiece(Color.colorless, TileStatus.EMPTY, victim.getXPosition(),
+							victim.getYPosition());
+
+				if (!testEqual.equals(koBoard))
 				{
-					killStone((Stone) piece, players);
-					suicide = false;
+					for (BoardPiece victim : victims)
+						killStone(victim, players);
+					return false;
 				}
 			}
 		}
 
-		if (suicide)
-		{
-			((Stone) stone).dies();
-			this.setTile(TileStatus.EMPTY, stone.getXPosition(), stone.getYPosition());
-		}
+		killStone(stone, players);
 
-		return suicide;
+		return true;
 	}
 
-	private void killStone(Stone stone, Player[] players)
+	private boolean stoneIsDead(BoardPiece stone, List<BoardPiece> victims)
 	{
-		players[((Stone) stone).getColor().getOpposite()].addCapture();
-		((Stone) stone).dies();
-		this.setTile(TileStatus.EMPTY, stone.getXPosition(), stone.getYPosition());
+		List<Position> positionCheck = new ArrayList<>();
+		for (int i = 0; i < Direction.values().length; i++)
+		{
+			victims.add(stone);
+			boolean hasLiberties = hasLiberties(stone.getColor(),
+					getNeighbours(stone.getPosition(), Direction.values()[i]), positionCheck, victims);
+			if (hasLiberties)
+			{
+				victims.clear();
+				return false;
+			}
+
+		}
+		return true;
+	}
+
+	private boolean hasLiberties(Color color, BoardPiece piece, List<Position> positionCheck, List<BoardPiece> victims)
+	{
+		if (!positionCheck.contains(piece.getPosition()))
+		{
+			positionCheck.add(piece.getPosition());
+
+			if (piece.getStatus() == TileStatus.EMPTY)
+				return true;
+			else if (piece.getStatus() == TileStatus.STONE && piece.getColor() == color)
+			{
+				victims.add(piece);
+				for (int i = 0; i < Direction.values().length; i++)
+				{
+					boolean hasLiberties = hasLiberties(piece.getColor(),
+							getNeighbours(piece.getPosition(), Direction.values()[i]), positionCheck, victims);
+					if (hasLiberties)
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private void killStone(BoardPiece stone, Player[] players)
+	{
+		if (players != null && stone.getColor() != Color.colorless)
+			players[stone.getColor().getOpposite()].addCapture();
+		this.setBoardPiece(Color.colorless, TileStatus.EMPTY, stone.getXPosition(), stone.getYPosition());
 	}
 
 	public int[] countTerritory()
@@ -247,17 +288,11 @@ public class Board
 
 		for (BoardPiece piece : pieces)
 		{
-			if (piece instanceof Stone)
-			{
-				checkTerritory(getNeighbours(piece.getPosition(), Direction.Left), ((Stone) piece).getColor(),
-						positionCheck);
-				checkTerritory(getNeighbours(piece.getPosition(), Direction.Right), ((Stone) piece).getColor(),
-						positionCheck);
-				checkTerritory(getNeighbours(piece.getPosition(), Direction.Top), ((Stone) piece).getColor(),
-						positionCheck);
-				checkTerritory(getNeighbours(piece.getPosition(), Direction.Bottom), ((Stone) piece).getColor(),
-						positionCheck);
-			}
+			if (piece.getStatus() == TileStatus.STONE)
+				for (int i = 0; i < Direction.values().length; i++)
+					checkTerritory(getNeighbours(piece.getPosition(), Direction.values()[i]), (piece).getColor(),
+							positionCheck);
+
 		}
 
 		return countPoint();
@@ -265,34 +300,29 @@ public class Board
 
 	private int[] countPoint()
 	{
-		int blackCount = 0;
-		int whiteCount = 0;
+		int[] count = new int[] { 0, 0 };
+
 		for (BoardPiece piece : pieces)
 		{
-			if (piece instanceof Tile)
-			{
-				if (((Tile) piece).getColor() == Color.black)
-					blackCount++;
-				else if (((Tile) piece).getColor() == Color.white)
-					whiteCount++;
-			}
+			if (piece.getStatus() == TileStatus.EMPTY && piece.getColor() != Color.colorless)
+				count[piece.getColor().getValue()]++;
 		}
-		return new int[] { blackCount, whiteCount };
+		return count;
 	}
 
-	public void checkTerritory(BoardPiece piece, Color color, boolean[][] positionCheck)
+	private void checkTerritory(BoardPiece piece, Color color, boolean[][] positionCheck)
 	{
 		// color should never be colorless, if it were to be colorless an
 		// arrayOutofBoundException would occur
 
-		if (piece instanceof Tile && ((Tile) piece).getStatus() == TileStatus.EMPTY
+		if (piece.getStatus() == TileStatus.EMPTY
 				&& !positionCheck[color.getValue()][piece.getXPosition() * dimension.getLenght()
 						+ piece.getYPosition()])
 		{
-			if (((Tile) piece).getColor() == Color.colorless)
-				((Tile) piece).setColor(color);
-			else if (((Tile) piece).getColor() != color)
-				((Tile) piece).setColor(Color.colorless);
+			if (piece.getColor() == Color.colorless)
+				piece.setColor(color);
+			else if (piece.getColor() != color)
+				piece.setColor(Color.colorless);
 
 			positionCheck[color.getValue()][piece.getXPosition() * dimension.getLenght() + piece.getYPosition()] = true;
 
@@ -311,13 +341,20 @@ public class Board
 		for (int i = 0; i < pieces.size(); i++)
 		{
 			if (!this.getBoardPiece(i).equals(board.getBoardPiece(i)))
-			{
-				System.out.println(this.getBoardPiece(i)+" "+board.getBoardPiece(i));
 				return false;
-			}
-				
 		}
 
 		return true;
 	}
+
+	public String toString()
+	{
+		String string = "";
+
+		for (int i = 0; i < pieces.size(); i++)
+			string += pieces.get(i) + "\n";
+
+		return string;
+	}
+
 }

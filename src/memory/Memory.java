@@ -43,10 +43,27 @@ public class Memory
 	 */
 	public Board getBoard(int turn)
 	{
+		players[0].setCapture(0);
+		players[1].setCapture(0);
+		
 		while (undoMemory.size() > turn)
 			doMemory.push(undoMemory.pop());
 
 		Board board = new Board(stackOpperation.reverseStack(stackOpperation.cloneStack(undoMemory)),dimension,players);
+
+		while (!doMemory.isEmpty())
+			undoMemory.push(doMemory.pop());
+
+		return board;
+	}
+	
+	public Board getKOBoard(int turn)
+	{
+		
+		while (undoMemory.size() > turn)
+			doMemory.push(undoMemory.pop());
+
+		Board board = new Board(stackOpperation.reverseStack(stackOpperation.cloneStack(undoMemory)),dimension,null);
 
 		while (!doMemory.isEmpty())
 			undoMemory.push(doMemory.pop());

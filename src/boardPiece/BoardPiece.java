@@ -1,19 +1,50 @@
 package boardPiece;
 
 import board.Board;
+import boardPiece.BoardPiece.TileStatus;
 import exception.ConstructorException;
 import exception.SuicideException;
+import smallStuff.Color;
 import smallStuff.Position;
 
-public abstract class BoardPiece
+public class BoardPiece
 {
+	public enum TileStatus
+	{
+		EMPTY, BORDER, STONE
+	}
+	
+	private Color color;
+	private TileStatus status;
 	private Position position;
 
-	BoardPiece(int x, int y)
+	public BoardPiece(int x, int y,Color color, TileStatus status)
 	{
 		position = new Position(x, y);
+		this.color = color;
+		this.status = status;
 	}
 
+	public TileStatus getStatus()
+	{
+		return status;
+	}
+
+	public void setStatus(TileStatus status)
+	{
+		this.status = status;
+	}
+
+	public Color getColor()
+	{
+		return color;
+	}
+
+	public void setColor(Color color)
+	{
+		this.color = color;
+	}
+	
 	public Position getPosition()
 	{
 		return position;
@@ -50,5 +81,9 @@ public abstract class BoardPiece
 		return position.getX() + " ," + position.getY() + "\t:";
 	}
 	
-	public abstract boolean equals(BoardPiece piece);
+	public  boolean equals(BoardPiece piece)
+	{
+		//TODO
+		return true;
+	}
 }

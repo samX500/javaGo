@@ -37,6 +37,11 @@ public class Player
 		this.capture.addCapture();
 	}
 
+	public Player clonePlayer()
+	{
+		return new Player(this.getCapture());
+	}
+	
 	public String toString()
 	{
 		return "player has " + capture + " captures";

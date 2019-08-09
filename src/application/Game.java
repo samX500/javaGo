@@ -4,8 +4,7 @@ import board.Board;
 import exception.ConstructorException;
 import exception.SuicideException;
 import memory.Memory;
-import smallStuff.Player;
-import smallStuff.Turn;
+import smallStuff.*;
 
 public class Game
 {
@@ -14,11 +13,12 @@ public class Game
 	private Board board;
 	private Turn turn;
 	private Memory memory;
-	
-	// TODO implement scoring mechanic
+
 	private Player player1;
 	private Player player2;
-	
+	private Komi blackKomi;
+	private Komi whiteKomi;
+
 	/**
 	 * Constructor for normal game
 	 * 
@@ -37,8 +37,10 @@ public class Game
 			turn = new Turn();
 			player1 = new Player();
 			player2 = new Player();
-			memory = new Memory(lenght,width,new Player[] {player1,player2});
-			
+			blackKomi = new Komi(0.0);
+			whiteKomi = new Komi(TIE_BREAKER);
+			memory = new Memory(lenght, width, new Player[] { player1, player2 });
+
 		} else
 			throw new ConstructorException("Invalid board size");
 	}
@@ -57,9 +59,6 @@ public class Game
 	public Game(int lenght, int width, int blackKomi, int whiteKomi, Board board)
 			throws ConstructorException, SuicideException
 	{
-		// Not sure if it is a good practice to have a constructor where some parameter
-		// are useless
-
 		if (board != null)
 			this.board = board;
 		else if (Board.validateSize(lenght, width))
@@ -70,7 +69,19 @@ public class Game
 		turn = new Turn();
 		player1 = new Player();
 		player2 = new Player();
-		memory = new Memory(lenght,width,new Player[] {player1,player2});
+		this.blackKomi = new Komi(blackKomi + 0.0);
+		this.whiteKomi = new Komi(whiteKomi + TIE_BREAKER);
+		memory = new Memory(lenght, width, new Player[] { player1, player2 });
+	}
+
+	public Double getBlackKomi()
+	{
+		return blackKomi.getKomi();
+	}
+
+	public Double getWhiteKomi()
+	{
+		return whiteKomi.getKomi();
 	}
 
 	public void incrementTurn()
@@ -92,15 +103,15 @@ public class Game
 	{
 		return player2;
 	}
-	
+
 	public Player[] getPlayers()
 	{
-		return new Player[] {player1,player2};
+		return new Player[] { player1, player2 };
 	}
-	
+
 	public void setTurn(int newturn)
 	{
-		if (newturn > 0)
+		if (newturn >= 0)
 			turn.setTurn(newturn);
 	}
 
@@ -123,13 +134,12 @@ public class Game
 	public int[] getScore()
 	{
 		int[] scores = board.countTerritory();
-		
-		scores[0]+= player1.getCapture();
-		scores[1]+= player2.getCapture();
-		
+
+		scores[0] += player1.getCapture();
+		scores[1] += player2.getCapture();
+
 		return scores;
 	}
-	
 
 	public Memory getMemory()
 	{

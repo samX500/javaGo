@@ -2,6 +2,7 @@ package gui;
 
 import javafx.scene.control.ScrollPane;
 
+import java.awt.TextField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,14 +11,16 @@ import board.Board;
 import boardPiece.BoardPiece;
 import control.GoController;
 import control.TurnButton;
-import boardPiece.Stone;
-import boardPiece.Tile;
-import boardPiece.Tile.TileStatus;
+import boardPiece.BoardPiece.TileStatus;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -28,6 +31,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import smallStuff.*;
 
@@ -39,6 +44,11 @@ public class Gui extends Application
 	public static final int WHITE_IMAGE = 1;
 	public static final int EMPTY_IMAGE = 2;
 	public static final int BORDER_IMAGE = 3;
+
+	public static final int CAPTURE = 1;
+	public static final int TERRITORY = 2;
+	public static final int KOMI = 3;
+	public static final int TOTAL = 4;
 
 	private static Stage mainStage;
 	private static List<Background> images;
@@ -76,6 +86,7 @@ public class Gui extends Application
 
 		display.setBottom(setupMemory());
 		display.setCenter(makeGrid());
+		display.setRight(pointChart());
 		showView();
 
 		Scene scene = new Scene(display);
@@ -106,6 +117,7 @@ public class Gui extends Application
 	{
 		showBoard();
 		showMemory();
+		showPoints();
 	}
 
 	public static void showBoard()
@@ -118,14 +130,14 @@ public class Gui extends Application
 			Button thisButton = (Button) pane.getChildren().get(i);
 			BoardPiece piece = currentBoard.getBoardPiece(i);
 
-			if (piece instanceof Stone)
+			if (piece.getStatus() == TileStatus.STONE)
 				thisButton.setBackground(
-						((Stone) piece).getColor() == Color.black ? images.get(BLACK_IMAGE) : images.get(WHITE_IMAGE));
+						(piece.getColor() == Color.black ? images.get(BLACK_IMAGE) : images.get(WHITE_IMAGE)));
 			else
-				thisButton.setBackground(((Tile) piece).getStatus() == TileStatus.EMPTY ? images.get(EMPTY_IMAGE)
-						: images.get(BORDER_IMAGE));
+				thisButton.setBackground(
+						piece.getStatus() == TileStatus.EMPTY ? images.get(EMPTY_IMAGE) : images.get(BORDER_IMAGE));
 
-			if (piece instanceof Tile && ((Tile) piece).getStatus() == TileStatus.EMPTY)
+			if (piece.getStatus() == TileStatus.EMPTY)
 			{
 				activateButton(thisButton, piece.getPosition());
 			} else
@@ -172,13 +184,13 @@ public class Gui extends Application
 		Button countPoint = new Button("Count territory");
 		goBack.setPrefHeight(BUTTON_SIZE);
 		countPoint.setPrefHeight(BUTTON_SIZE);
-		
+
 		goBack.setOnAction(e -> GoController.undo(game));
-		countPoint.setOnAction(e-> GoController.countPoint(game));
-		
+		countPoint.setOnAction(e -> GoController.countPoint(game));
+
 		control.getChildren().add(goBack);
 		control.getChildren().add(countPoint);
-		
+
 		return control;
 
 	}
@@ -202,6 +214,78 @@ public class Gui extends Application
 	public static ObservableList<Node> getMemoryLine()
 	{
 		return ((HBox) ((ScrollPane) ((BorderPane) display.getBottom()).getCenter()).getContent()).getChildren();
+	}
+
+	public static BorderPane pointChart()
+	{
+		BorderPane pointChart = new BorderPane();
+		pointChart.setCenter(pointTable());
+		VBox control = new VBox();
+
+		return pointChart;
+	}
+
+	public static void showPoints()
+	{
+		HBox pointTable = getPointTable();
+
+		ObservableList<Node> blackPoints = ((VBox) pointTable.getChildren().get(0)).getChildren();
+		ObservableList<Node> whitePoints = ((VBox) pointTable.getChildren().get(1)).getChildren();
+
+		int[] territory = game.getBoard().countTerritory();
+
+		((Label) blackPoints.get(CAPTURE)).setText("Capture: " + game.getPlayer1().getCapture());
+		((Label) blackPoints.get(TERRITORY)).setText("Territory: " + territory[Color.black.getValue()]);
+		((Label) blackPoints.get(KOMI)).setText("Komi: " + game.getBlackKomi());
+		((Label) blackPoints.get(TOTAL)).setText(
+				"Total: " + (game.getPlayer1().getCapture() + territory[Color.black.getValue()] + game.getBlackKomi()));
+
+		((Label) whitePoints.get(CAPTURE)).setText("Capture: " + game.getPlayer2().getCapture());
+		((Label) whitePoints.get(TERRITORY)).setText("Territory: " + territory[Color.white.getValue()]);
+		((Label) whitePoints.get(KOMI)).setText("Komi: " + game.getWhiteKomi());
+		((Label) whitePoints.get(TOTAL)).setText(
+				"Total: " + (game.getPlayer2().getCapture() + territory[Color.white.getValue()] + game.getWhiteKomi()));
+
+	}
+
+	private static HBox pointTable()
+	{
+		HBox points = new HBox();
+		VBox black = new VBox();
+		VBox white = new VBox();
+
+		Label blackLabel = getLabel("Black", BUTTON_SIZE);
+		Label blackCapture = getLabel("", BUTTON_SIZE);
+		Label blackTerritory = getLabel("", BUTTON_SIZE);
+		Label blackKomi = getLabel("", BUTTON_SIZE);
+		Label blackTotal = getLabel("", BUTTON_SIZE);
+
+		Label whiteLabel = getLabel("White", BUTTON_SIZE);
+		Label whiteCapture = getLabel("", BUTTON_SIZE);
+		Label whiteTerritory = getLabel("", BUTTON_SIZE);
+		Label whiteKomi = getLabel("", BUTTON_SIZE);
+		Label whiteTotal = getLabel("", BUTTON_SIZE);
+
+		black.getChildren().addAll(blackLabel, blackCapture, blackTerritory, blackKomi, blackTotal);
+		white.getChildren().addAll(whiteLabel, whiteCapture, whiteTerritory, whiteKomi, whiteTotal);
+
+		points.getChildren().addAll(black, white);
+		points.setSpacing(BUTTON_SIZE);
+		points.setPadding(new Insets(BUTTON_SIZE));
+
+		return points;
+	}
+
+	private static Label getLabel(String message, int size)
+	{
+		Label label = new Label(message);
+		label.setFont(new Font(size));
+		return label;
+	}
+
+	private static HBox getPointTable()
+	{
+		return (HBox) ((BorderPane) display.getRight()).getCenter();
 	}
 
 	private void loadImages()

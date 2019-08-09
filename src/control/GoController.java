@@ -2,7 +2,7 @@ package control;
 
 import application.Game;
 import board.Board;
-import boardPiece.Stone;
+import boardPiece.BoardPiece.TileStatus;
 import exception.SuicideException;
 import gui.Gui;
 import smallStuff.*;
@@ -15,19 +15,20 @@ public class GoController
 
 		if (TurnButton.isActive())
 		{
+			game.setBoard(game.getMemory().getBoard(TurnButton.getTurn()));
 			resetTo(game, TurnButton.getTurn());
 			TurnButton.setInactive();
 		}
 
 		Board currentBoard = game.getBoard();
-		Board KOBoard = game.getTurn().getTurn() > 1 ? game.getMemory().getBoard(game.getTurn().getTurn() - 2) : null;
+		Board KOBoard = game.getTurn().getTurn() > 1 ? game.getMemory().getKOBoard(game.getTurn().getTurn() - 1) : null;
 
 		if (game.isBlack())
-			currentBoard.setStone(Color.black, position.getX(), position.getY());
+			currentBoard.setBoardPiece(Color.black,TileStatus.STONE, position.getX(), position.getY());
 		else
-			currentBoard.setStone(Color.white, position.getX(), position.getY());
+			currentBoard.setBoardPiece(Color.white,TileStatus.STONE, position.getX(), position.getY());
 
-		suicide = currentBoard.removeDeadPieces(game.getPlayers(), position, KOBoard);
+		suicide = currentBoard.checkDeadPiece(game.getPlayers(), position, KOBoard);
 
 		if (suicide)
 			Gui.showView();
@@ -42,6 +43,7 @@ public class GoController
 	public static void undo(Game game)
 	{
 		backATurn(game);
+		game.setBoard(game.getMemory().getLastBoard());
 		Gui.showView();
 	}
 
@@ -50,7 +52,6 @@ public class GoController
 		// TODO find a good way to deActivate if turn == game.getTurn();
 		game.setBoard(game.getMemory().getBoard(turn));
 		TurnButton.setActive(turn);
-		game.getBoard().removeDeadPieces(game.getPlayers(), null, null);
 		Gui.showView();
 	}
 
@@ -63,7 +64,6 @@ public class GoController
 	public static void backATurn(Game game)
 	{
 		game.getMemory().removeLastMove();
-		game.setBoard(game.getMemory().getLastBoard());
 		game.setTurn(game.getTurn().getTurn() - 1);
 	}
 
