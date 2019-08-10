@@ -1,11 +1,7 @@
 package memory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
-
 import board.Board;
-import boardPiece.BoardPiece;
 import exception.ConstructorException;
 import smallStuff.*;
 
@@ -49,7 +45,7 @@ public class Memory
 		while (undoMemory.size() > turn)
 			doMemory.push(undoMemory.pop());
 
-		Board board = new Board(stackOpperation.reverseStack(stackOpperation.cloneStack(undoMemory)),dimension,players);
+		Board board = new Board(StackOpperation.reverseStack(StackOpperation.cloneStack(undoMemory)),dimension,players);
 
 		while (!doMemory.isEmpty())
 			undoMemory.push(doMemory.pop());
@@ -63,7 +59,7 @@ public class Memory
 		while (undoMemory.size() > turn)
 			doMemory.push(undoMemory.pop());
 
-		Board board = new Board(stackOpperation.reverseStack(stackOpperation.cloneStack(undoMemory)),dimension,null);
+		Board board = new Board(StackOpperation.reverseStack(StackOpperation.cloneStack(undoMemory)),dimension,null);
 
 		while (!doMemory.isEmpty())
 			undoMemory.push(doMemory.pop());

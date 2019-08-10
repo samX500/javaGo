@@ -2,7 +2,6 @@ package application;
 
 import board.Board;
 import exception.ConstructorException;
-import exception.SuicideException;
 import memory.Memory;
 import smallStuff.*;
 
@@ -57,7 +56,7 @@ public class Game
 	 * @throws ConstructorException
 	 */
 	public Game(int lenght, int width, int blackKomi, int whiteKomi, Board board)
-			throws ConstructorException, SuicideException
+			throws ConstructorException
 	{
 		if (board != null)
 			this.board = board;
@@ -145,4 +144,10 @@ public class Game
 	{
 		return memory;
 	}
+	
+	public void endGame()
+	{
+		
+	}
+	
 }

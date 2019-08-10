@@ -1,6 +1,6 @@
 package smallStuff;
 
-public class staticList
+public class StaticList
 {
 	public static boolean[] instantiateBooleanList(boolean defaultVal,int size)
 	{

@@ -3,7 +3,6 @@ package control;
 import application.Game;
 import board.Board;
 import boardPiece.BoardPiece.TileStatus;
-import exception.SuicideException;
 import gui.Gui;
 import smallStuff.*;
 
@@ -24,9 +23,9 @@ public class GoController
 		Board KOBoard = game.getTurn().getTurn() > 1 ? game.getMemory().getKOBoard(game.getTurn().getTurn() - 1) : null;
 
 		if (game.isBlack())
-			currentBoard.setBoardPiece(Color.black,TileStatus.STONE, position.getX(), position.getY());
+			currentBoard.setBoardPiece(Color.black, TileStatus.STONE, position.getX(), position.getY());
 		else
-			currentBoard.setBoardPiece(Color.white,TileStatus.STONE, position.getX(), position.getY());
+			currentBoard.setBoardPiece(Color.white, TileStatus.STONE, position.getX(), position.getY());
 
 		suicide = currentBoard.checkDeadPiece(game.getPlayers(), position, KOBoard);
 
@@ -67,10 +66,23 @@ public class GoController
 		game.setTurn(game.getTurn().getTurn() - 1);
 	}
 
-	public static void countPoint(Game game)
+	public static void pass(Game game)
 	{
-		int[] score = game.getScore();
-		System.out.println(score[0] + " " + score[1]);
+		if (PassCheck.isActive() && PassCheck.getTurn() == game.getTurn().getTurn() - 1)
+			System.out.println("Game ended");
+		// TODO end game
+		else
+		{
+			PassCheck.setActive(game.getTurn().getTurn());
+			game.getMemory().saveMove(null, null);
+			game.incrementTurn();
+			Gui.showView();
+		}
+	}
+
+	public static void showTerritory(Game game)
+	{
+		Gui.showTerritory();
 	}
 
 }

@@ -2,7 +2,7 @@ package smallStuff;
 
 import java.util.Stack;
 
-public class stackOpperation
+public class StackOpperation
 {
 	public static <T> Stack<T> reverseStack(Stack<T> stack)
 	{

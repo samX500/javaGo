@@ -1,11 +1,8 @@
 package gui;
 
 import javafx.scene.control.ScrollPane;
-
-import java.awt.TextField;
 import java.util.ArrayList;
 import java.util.List;
-
 import application.Game;
 import board.Board;
 import boardPiece.BoardPiece;
@@ -15,12 +12,11 @@ import boardPiece.BoardPiece.TileStatus;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -31,19 +27,26 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import smallStuff.*;
 
 public class Gui extends Application
 {
-	public static final int BUTTON_SIZE = 35;
+	public static final int BUTTON_SIZE = 50;
 
 	public static final int BLACK_IMAGE = 0;
 	public static final int WHITE_IMAGE = 1;
 	public static final int EMPTY_IMAGE = 2;
 	public static final int BORDER_IMAGE = 3;
+	public static final int EMPTY_BLACK_IMAGE = 4;
+	public static final int EMPTY_WHITE_IMAGE = 5;
+	public static final int FADED_BLACK_EMPTY_IMAGE = 6;
+	public static final int FADED_BLACK_BLACK_IMAGE = 7;
+	public static final int FADED_BLACK_WHITE_IMAGE = 8;
+	public static final int FADED_WHITE_EMPTY_IMAGE = 9;
+	public static final int FADED_WHITE_BLACK_IMAGE = 10;
+	public static final int FADED_WHITE_WHITE_IMAGE = 11;
 
 	public static final int CAPTURE = 1;
 	public static final int TERRITORY = 2;
@@ -147,6 +150,36 @@ public class Gui extends Application
 		}
 	}
 
+	public static void showTerritory()
+	{
+		Board currentBoard = game.getBoard();
+		GridPane pane = (GridPane) display.getCenter();
+
+		for (int i = 0; i < pane.getChildren().size(); i++)
+		{
+			Button thisButton = (Button) pane.getChildren().get(i);
+			BoardPiece piece = currentBoard.getBoardPiece(i);
+
+			if (piece.getStatus() == TileStatus.STONE)
+				thisButton.setBackground(
+						(piece.getColor() == Color.black ? images.get(BLACK_IMAGE) : images.get(WHITE_IMAGE)));
+			else if (piece.getColor() != Color.colorless)
+				thisButton.setBackground(piece.getColor() == Color.black ? images.get(EMPTY_BLACK_IMAGE)
+						: images.get(EMPTY_WHITE_IMAGE));
+			else
+				thisButton.setBackground(
+						piece.getStatus() == TileStatus.EMPTY ? images.get(EMPTY_IMAGE) : images.get(BORDER_IMAGE));
+
+			if (piece.getStatus() == TileStatus.EMPTY)
+			{
+				activateTerritoryButton(thisButton, piece);
+			} else
+			{
+				disableButton(thisButton);
+			}
+		}
+	}
+
 	private static void disableButton(Button button)
 	{
 		button.setOnMouseEntered(null);
@@ -164,35 +197,22 @@ public class Gui extends Application
 		button.setOnAction(e -> GoController.placeStone(game, position));
 	}
 
-	public static BorderPane setupMemory()
+	private static void activateTerritoryButton(Button button, BoardPiece piece)
 	{
-		BorderPane memoryPane = new BorderPane();
+		boolean isBlack = TurnButton.isActive() ? TurnButton.getTurn() % 2 == 0 : game.isBlack();
+
+		button.setOnMouseEntered(e -> button.setBackground(images.get(isBlack ? BLACK_IMAGE : WHITE_IMAGE)));
+		button.setOnMouseExited(e -> button.setBackground(piece.getColor() == Color.colorless ? images.get(EMPTY_IMAGE)
+				: piece.getColor() == Color.black ? images.get(EMPTY_BLACK_IMAGE) : images.get(EMPTY_WHITE_IMAGE)));
+		button.setOnAction(e -> GoController.placeStone(game, piece.getPosition()));
+	}
+
+	public static ScrollPane setupMemory()
+	{
 		HBox memoryLine = new HBox();
 		ScrollPane scroll = new ScrollPane(memoryLine);
 
-		memoryPane.setCenter(scroll);
-		memoryPane.setLeft(createMemoryMenu());
-
-		return memoryPane;
-	}
-
-	private static VBox createMemoryMenu()
-	{
-		VBox control = new VBox();
-
-		Button goBack = new Button("Undo");
-		Button countPoint = new Button("Count territory");
-		goBack.setPrefHeight(BUTTON_SIZE);
-		countPoint.setPrefHeight(BUTTON_SIZE);
-
-		goBack.setOnAction(e -> GoController.undo(game));
-		countPoint.setOnAction(e -> GoController.countPoint(game));
-
-		control.getChildren().add(goBack);
-		control.getChildren().add(countPoint);
-
-		return control;
-
+		return scroll;
 	}
 
 	public static void showMemory()
@@ -213,14 +233,32 @@ public class Gui extends Application
 
 	public static ObservableList<Node> getMemoryLine()
 	{
-		return ((HBox) ((ScrollPane) ((BorderPane) display.getBottom()).getCenter()).getContent()).getChildren();
+		return ((HBox) ((ScrollPane) display.getBottom()).getContent()).getChildren();
 	}
 
 	public static BorderPane pointChart()
 	{
+
 		BorderPane pointChart = new BorderPane();
+		HBox control = new HBox();
+
+		Button goBack = new Button("Undo");
+		Button pass = new Button("Pass");
+		Button showTerritory = new Button("Show territory");
+
+		goBack.setPrefHeight(BUTTON_SIZE);
+		goBack.setOnAction(e -> GoController.undo(game));
+
+		pass.setPrefHeight(BUTTON_SIZE);
+		pass.setOnAction(e -> GoController.pass(game));
+
+		showTerritory.setPrefHeight(BUTTON_SIZE);
+		showTerritory.setOnAction(e -> GoController.showTerritory(game));
+
+		control.getChildren().addAll(goBack, pass, showTerritory);
+
 		pointChart.setCenter(pointTable());
-		VBox control = new VBox();
+		pointChart.setBottom(control);
 
 		return pointChart;
 	}
@@ -292,8 +330,11 @@ public class Gui extends Application
 	{
 		images.add(loadBackground("goBlack.png"));
 		images.add(loadBackground("goWhite.png"));
-		images.add(loadBackground("emptyTile.jpg"));
+		images.add(loadBackground("emptyTile.png"));
 		images.add(loadBackground("borderTile.jpg"));
+		images.add(loadBackground("blackEmpty.png"));
+		images.add(loadBackground("whiteEmpty.png"));
+		images.add(loadBackground("fadedBlackEmpty.png"));
 	}
 
 	private static Background loadBackground(String fileName)

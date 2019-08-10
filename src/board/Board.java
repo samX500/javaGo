@@ -2,16 +2,9 @@ package board;
 
 import boardPiece.*;
 import boardPiece.BoardPiece.TileStatus;
-import exception.ConstructorException;
-import exception.SuicideException;
-import gui.Gui;
-import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
 import memory.Move;
 import smallStuff.*;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
@@ -55,12 +48,15 @@ public class Board
 		{
 			Move move = moveStack.pop();
 			// TODO check the case where the move is null (player passed)
-			setBoardPiece(move.getColor(), TileStatus.STONE, move.getPosition().getX(), move.getPosition().getY());
+			if (move.getPosition() != null)
+				setBoardPiece(move.getColor(), TileStatus.STONE, move.getPosition().getX(), move.getPosition().getY());
 
 			if (i > 1)
 			{
 				KOBoard[i] = clone(this);
-				this.checkDeadPiece(players, move.getPosition(), KOBoard[i - 2]);
+
+				if (move.getPosition() != null)
+					this.checkDeadPiece(players, move.getPosition(), KOBoard[i - 2]);
 			} else
 				KOBoard[i] = null;
 			i++;
@@ -191,13 +187,13 @@ public class Board
 		List<BoardPiece> victims = new ArrayList<>();
 		BoardPiece stone = getBoardPiece(position);
 
-		if (stoneIsDead(stone, victims))
+		if (stone.isStone() && stoneIsDead(stone, victims))
 			return checkKO(stone, players, koBoard);
 
 		for (int i = 0; i < Direction.values().length; i++)
 		{
 			BoardPiece piece = getNeighbours(position, Direction.values()[i]);
-			if (stoneIsDead(piece, victims))
+			if (piece.isStone() && stoneIsDead(piece, victims))
 				for (BoardPiece victim : victims)
 					killStone(victim, players);
 		}
@@ -207,12 +203,13 @@ public class Board
 
 	private boolean checkKO(BoardPiece stone, Player[] players, Board koBoard)
 	{
+		boolean suicide = true;
 		List<BoardPiece> victims = new ArrayList<>();
 
 		for (int i = 0; i < Direction.values().length; i++)
 		{
 			BoardPiece piece = getNeighbours(stone.getPosition(), Direction.values()[i]);
-			if (stoneIsDead(piece, victims))
+			if (piece.isStone()&&piece.getColor()!=stone.getColor() && stoneIsDead(piece, victims))
 			{
 				Board testEqual = clone(this);
 				for (BoardPiece victim : victims)
@@ -223,12 +220,17 @@ public class Board
 				{
 					for (BoardPiece victim : victims)
 						killStone(victim, players);
-					return false;
+					victims.clear();
+					suicide = false;
 				}
 			}
 		}
-
-		killStone(stone, players);
+		
+		if(!suicide)
+			return false;
+		
+		// Sends a null player because suicide shouldn't count point
+		killStone(stone, null);
 
 		return true;
 	}
@@ -236,9 +238,9 @@ public class Board
 	private boolean stoneIsDead(BoardPiece stone, List<BoardPiece> victims)
 	{
 		List<Position> positionCheck = new ArrayList<>();
+		positionCheck.add(stone.getPosition());
 		for (int i = 0; i < Direction.values().length; i++)
 		{
-			victims.add(stone);
 			boolean hasLiberties = hasLiberties(stone.getColor(),
 					getNeighbours(stone.getPosition(), Direction.values()[i]), positionCheck, victims);
 			if (hasLiberties)
@@ -246,8 +248,8 @@ public class Board
 				victims.clear();
 				return false;
 			}
-
 		}
+		victims.add(stone);
 		return true;
 	}
 
@@ -259,7 +261,7 @@ public class Board
 
 			if (piece.getStatus() == TileStatus.EMPTY)
 				return true;
-			else if (piece.getStatus() == TileStatus.STONE && piece.getColor() == color)
+			else if (piece.isStone() && piece.getColor() == color)
 			{
 				victims.add(piece);
 				for (int i = 0; i < Direction.values().length; i++)
@@ -283,8 +285,8 @@ public class Board
 
 	public int[] countTerritory()
 	{
-		boolean[][] positionCheck = new boolean[][] { staticList.instantiateBooleanList(false, pieces.size()),
-				staticList.instantiateBooleanList(false, pieces.size()) };
+		boolean[][] positionCheck = new boolean[][] { StaticList.instantiateBooleanList(false, pieces.size()),
+				StaticList.instantiateBooleanList(false, pieces.size()) };
 
 		for (BoardPiece piece : pieces)
 		{
@@ -341,9 +343,10 @@ public class Board
 		for (int i = 0; i < pieces.size(); i++)
 		{
 			if (!this.getBoardPiece(i).equals(board.getBoardPiece(i)))
+			{
 				return false;
+			}
 		}
-
 		return true;
 	}
 
@@ -352,7 +355,7 @@ public class Board
 		String string = "";
 
 		for (int i = 0; i < pieces.size(); i++)
-			string += pieces.get(i) + "\n";
+			string += pieces.get(i).getStatus() == TileStatus.STONE ? pieces.get(i) + "\n" : "";
 
 		return string;
 	}

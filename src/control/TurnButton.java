@@ -32,8 +32,6 @@ public class TurnButton
 	{
 		if(isATurnButtonActive)
 			return turnActivate;
-		//TODO should this throw exception if it's not active
-		//doesn't return if turnButton is deactivated
 		return -1;
 	}
 	

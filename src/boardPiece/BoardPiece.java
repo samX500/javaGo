@@ -1,9 +1,5 @@
 package boardPiece;
 
-import board.Board;
-import boardPiece.BoardPiece.TileStatus;
-import exception.ConstructorException;
-import exception.SuicideException;
 import smallStuff.Color;
 import smallStuff.Position;
 
@@ -13,12 +9,12 @@ public class BoardPiece
 	{
 		EMPTY, BORDER, STONE
 	}
-	
+
 	private Color color;
 	private TileStatus status;
 	private Position position;
 
-	public BoardPiece(int x, int y,Color color, TileStatus status)
+	public BoardPiece(int x, int y, Color color, TileStatus status)
 	{
 		position = new Position(x, y);
 		this.color = color;
@@ -44,7 +40,7 @@ public class BoardPiece
 	{
 		this.color = color;
 	}
-	
+
 	public Position getPosition()
 	{
 		return position;
@@ -76,14 +72,25 @@ public class BoardPiece
 		this.position.setY(y);
 	}
 
+	public boolean isStone()
+	{
+		return status == TileStatus.STONE;
+	}
+
 	public String toString()
 	{
-		return position.getX() + " ," + position.getY() + "\t:";
+		return color + ", " + status + ", " + position.getX() + " ," + position.getY();
 	}
-	
-	public  boolean equals(BoardPiece piece)
+
+	public boolean equals(BoardPiece piece)
 	{
-		//TODO
-		return true;
+	
+		if (!position.equals(piece.getPosition()))
+			return false;
+		if (!(getStatus() == piece.getStatus()))
+			return false;
+
+		return isStone() ? getColor() == piece.getColor() : true;
 	}
+
 }

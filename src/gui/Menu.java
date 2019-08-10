@@ -2,7 +2,6 @@ package gui;
 
 import application.Game;
 import exception.ConstructorException;
-import exception.SuicideException;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -20,7 +19,7 @@ public class Menu
 	 * @throws SuicideException
 	 * @throws ConstructorException
 	 */
-	public static Game createGame() throws ConstructorException, SuicideException
+	public static Game createGame() throws ConstructorException
 	{
 		// TODO maybe this could go in another class
 
