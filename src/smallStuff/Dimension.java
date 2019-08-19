@@ -31,6 +31,11 @@ public class Dimension
 		this.width = width;
 	}
 
+	public int getArea()
+	{
+		return width*lenght;
+	}
+	
 	public boolean equal(Dimension dimension)
 	{
 		return dimension != null && lenght == dimension.getLenght() && width == dimension.getWidth();
@@ -40,4 +45,6 @@ public class Dimension
 	{
 		return "lenght: " + lenght + ", width: " + width;
 	}
+
+	
 }

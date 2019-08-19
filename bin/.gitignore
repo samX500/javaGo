@@ -1,18 +1,5 @@
-/application/
 /gui/
-/boardPiece/
 /control/
+/application/
 /board/
-/smallStuff/
-/memory/
-/exception/
-/emptyTile - Copy (2).jpg
-/blackEmpty.png
-/emptyTile.png
-/whiteEmpty.png
-/fadedBlackEmpty.png
-/goBlack - Copy (2).png
-/goBlack - Copy (3).png
-/goWhite - Copy (2).png
-/goWhite - Copy (3).png
-/goWhite - Copy.png
+/fileManagement/

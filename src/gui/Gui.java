@@ -2,7 +2,11 @@ package gui;
 
 import javafx.scene.control.ScrollPane;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import com.sun.xml.internal.ws.api.pipe.PipeCloner;
+
 import application.Game;
 import board.Board;
 import boardPiece.BoardPiece;
@@ -11,11 +15,16 @@ import control.TurnButton;
 import boardPiece.BoardPiece.TileStatus;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
@@ -93,6 +102,9 @@ public class Gui extends Application
 		showView();
 
 		Scene scene = new Scene(display);
+		// TODO figure out the min dimension
+		mainStage.setMinWidth(BUTTON_SIZE * game.getBoard().getLenght());
+		mainStage.setMinHeight(BUTTON_SIZE * game.getBoard().getLenght());
 		mainStage.setScene(scene);
 		mainStage.show();
 
@@ -141,12 +153,10 @@ public class Gui extends Application
 						piece.getStatus() == TileStatus.EMPTY ? images.get(EMPTY_IMAGE) : images.get(BORDER_IMAGE));
 
 			if (piece.getStatus() == TileStatus.EMPTY)
-			{
 				activateButton(thisButton, piece.getPosition());
-			} else
-			{
+			else
 				disableButton(thisButton);
-			}
+
 		}
 	}
 
@@ -171,13 +181,59 @@ public class Gui extends Application
 						piece.getStatus() == TileStatus.EMPTY ? images.get(EMPTY_IMAGE) : images.get(BORDER_IMAGE));
 
 			if (piece.getStatus() == TileStatus.EMPTY)
-			{
 				activateTerritoryButton(thisButton, piece);
-			} else
-			{
+			else
 				disableButton(thisButton);
-			}
+
 		}
+	}
+
+	public static void showEndGame(HashMap<Position, Color> fadedStone)
+	{
+		Board currentBoard = game.getBoard();
+		GridPane pane = (GridPane) display.getCenter();
+
+		for (int i = 0; i < pane.getChildren().size(); i++)
+		{
+			Button thisButton = (Button) pane.getChildren().get(i);
+			BoardPiece piece = currentBoard.getBoardPiece(i);
+			if (piece.getStatus() == TileStatus.STONE)
+				thisButton.setBackground(
+						(piece.getColor() == Color.black ? images.get(BLACK_IMAGE) : images.get(WHITE_IMAGE)));
+			else if (piece.getStatus() == TileStatus.BORDER)
+				thisButton.setBackground(images.get(BORDER_IMAGE));
+			else if (fadedStone.containsKey(piece.getPosition()))
+				switch (piece.getColor())
+				{
+				case colorless:
+					thisButton.setBackground(
+							fadedStone.get(piece.getPosition()) == Color.black ? images.get(FADED_BLACK_EMPTY_IMAGE)
+									: images.get(FADED_WHITE_EMPTY_IMAGE));
+					break;
+				case black:
+					thisButton.setBackground(
+							fadedStone.get(piece.getPosition()) == Color.black ? images.get(FADED_BLACK_BLACK_IMAGE)
+									: images.get(FADED_WHITE_BLACK_IMAGE));
+					break;
+
+				case white:
+					thisButton.setBackground(
+							fadedStone.get(piece.getPosition()) == Color.black ? images.get(FADED_BLACK_WHITE_IMAGE)
+									: images.get(FADED_WHITE_WHITE_IMAGE));
+					break;
+				}
+			else if (piece.getColor() != Color.colorless)
+				thisButton.setBackground(piece.getColor() == Color.black ? images.get(EMPTY_BLACK_IMAGE)
+						: images.get(EMPTY_WHITE_IMAGE));
+			else
+				thisButton.setBackground(images.get(EMPTY_IMAGE));
+
+			if (piece.getStatus() == TileStatus.STONE || fadedStone.containsKey(piece.getPosition()))
+				activateEndGameButton(thisButton, piece.getPosition(), fadedStone);
+			else
+				disableButton(thisButton);
+		}
+
 	}
 
 	private static void disableButton(Button button)
@@ -205,6 +261,11 @@ public class Gui extends Application
 		button.setOnMouseExited(e -> button.setBackground(piece.getColor() == Color.colorless ? images.get(EMPTY_IMAGE)
 				: piece.getColor() == Color.black ? images.get(EMPTY_BLACK_IMAGE) : images.get(EMPTY_WHITE_IMAGE)));
 		button.setOnAction(e -> GoController.placeStone(game, piece.getPosition()));
+	}
+
+	private static void activateEndGameButton(Button button, Position position, HashMap<Position, Color> fadedStone)
+	{
+		button.setOnAction(e -> GoController.fadeStone(game, position, fadedStone));
 	}
 
 	public static ScrollPane setupMemory()
@@ -242,20 +303,28 @@ public class Gui extends Application
 		BorderPane pointChart = new BorderPane();
 		HBox control = new HBox();
 
-		Button goBack = new Button("Undo");
+		Button undo = new Button("Undo");
 		Button pass = new Button("Pass");
 		Button showTerritory = new Button("Show territory");
+		Button confirmEnd = new Button("");
 
-		goBack.setPrefHeight(BUTTON_SIZE);
-		goBack.setOnAction(e -> GoController.undo(game));
-
+		undo.setPrefHeight(BUTTON_SIZE);
+		undo.setMinWidth(BUTTON_SIZE);
+		undo.setOnAction(e -> GoController.undo(game));
+		
 		pass.setPrefHeight(BUTTON_SIZE);
+		pass.setMinWidth(BUTTON_SIZE);
 		pass.setOnAction(e -> GoController.pass(game));
 
 		showTerritory.setPrefHeight(BUTTON_SIZE);
+		showTerritory.setMinWidth(BUTTON_SIZE);
 		showTerritory.setOnAction(e -> GoController.showTerritory(game));
 
-		control.getChildren().addAll(goBack, pass, showTerritory);
+		confirmEnd.setPrefHeight(BUTTON_SIZE);
+		confirmEnd.setMinWidth(BUTTON_SIZE);
+		confirmEnd.setOnAction(null);
+
+		control.getChildren().addAll(undo, pass, showTerritory, confirmEnd);
 
 		pointChart.setCenter(pointTable());
 		pointChart.setBottom(control);
@@ -314,6 +383,30 @@ public class Gui extends Application
 		return points;
 	}
 
+	public static void setEndGameControl()
+	{
+		ObservableList<Node> control = getControl();
+
+		setButton((Button) control.get(1), null, "");
+		setButton((Button) control.get(2), null, "");
+		setButton((Button) control.get(3), e -> GoController.confirmEnd(game), "Both player confirmed dead group");
+	}
+
+	public static void removeEndGameControl()
+	{
+		ObservableList<Node> control = getControl();
+
+		setButton((Button) control.get(1), e -> GoController.pass(game), "Pass");
+		setButton((Button) control.get(2), e -> GoController.showTerritory(game), "Show territory");
+		setButton((Button) control.get(3), null, "");
+	}
+
+	public static void setButton(Button button, EventHandler<ActionEvent> event, String title)
+	{
+		button.setOnAction(event);
+		button.setText(title);
+	}
+
 	private static Label getLabel(String message, int size)
 	{
 		Label label = new Label(message);
@@ -326,6 +419,22 @@ public class Gui extends Application
 		return (HBox) ((BorderPane) display.getRight()).getCenter();
 	}
 
+	private static ObservableList<Node> getControl()
+	{
+		return ((HBox) ((BorderPane) display.getRight()).getBottom()).getChildren();
+	}
+
+	public static void winMessage(String title, String message)
+	{
+		Alert winner = new Alert(AlertType.INFORMATION);
+		winner.setTitle(title);
+		winner.setContentText(message);
+		
+		winner.showAndWait();
+		
+		mainStage.close();
+	}
+	
 	private void loadImages()
 	{
 		images.add(loadBackground("goBlack.png"));
@@ -335,6 +444,11 @@ public class Gui extends Application
 		images.add(loadBackground("blackEmpty.png"));
 		images.add(loadBackground("whiteEmpty.png"));
 		images.add(loadBackground("fadedBlackEmpty.png"));
+		images.add(loadBackground("fadedBlackBlack.png"));
+		images.add(loadBackground("fadedBlackWhite.png"));
+		images.add(loadBackground("fadedWhiteEmpty.png"));
+		images.add(loadBackground("fadedWhiteBlack.png"));
+		images.add(loadBackground("fadedWhiteWhite.png"));
 	}
 
 	private static Background loadBackground(String fileName)

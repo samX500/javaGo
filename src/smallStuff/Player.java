@@ -36,6 +36,11 @@ public class Player
 	{
 		this.capture.addCapture();
 	}
+	
+	public void removeCapture()
+	{
+		capture.setCapture(getCapture()-1);
+	}
 
 	public Player clonePlayer()
 	{
@@ -46,4 +51,6 @@ public class Player
 	{
 		return "player has " + capture + " captures";
 	}
+
+	
 }

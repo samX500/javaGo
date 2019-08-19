@@ -130,24 +130,20 @@ public class Game
 			this.board = board;
 	}
 
-	public int[] getScore()
+	public double[] getScore()
 	{
 		int[] scores = board.countTerritory();
 
-		scores[0] += player1.getCapture();
-		scores[1] += player2.getCapture();
+		double[] result = new double[] {scores[0],scores[1]};
+		result[0] += player1.getCapture()+blackKomi.getKomi();
+		result[1] += player2.getCapture()+whiteKomi.getKomi();
 
-		return scores;
+		return result;
 	}
 
 	public Memory getMemory()
 	{
 		return memory;
-	}
-	
-	public void endGame()
-	{
-		
 	}
 	
 }
