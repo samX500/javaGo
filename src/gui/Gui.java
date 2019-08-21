@@ -79,6 +79,7 @@ public class Gui extends Application
 		game = Menu.createGame();
 
 		setupGui(stage, game.getBoard());
+		
 	}
 
 	/**
@@ -96,6 +97,7 @@ public class Gui extends Application
 	{
 		display = new BorderPane();
 
+		display.setTop(fileChooser());
 		display.setBottom(setupMemory());
 		display.setCenter(makeGrid());
 		display.setRight(pointChart());
@@ -110,6 +112,7 @@ public class Gui extends Application
 
 	}
 
+	
 	private GridPane makeGrid()
 	{
 		GridPane pane = new GridPane();
@@ -135,6 +138,13 @@ public class Gui extends Application
 		showPoints();
 	}
 
+	public static void showEndView(HashMap<Position, Color> fadedStone)
+	{
+		showEndGame(fadedStone);
+		showMemory();
+		showPoints();
+	}
+	
 	public static void showBoard()
 	{
 		Board currentBoard = game.getBoard();
@@ -193,6 +203,8 @@ public class Gui extends Application
 		Board currentBoard = game.getBoard();
 		GridPane pane = (GridPane) display.getCenter();
 
+		System.out.println(currentBoard);
+		
 		for (int i = 0; i < pane.getChildren().size(); i++)
 		{
 			Button thisButton = (Button) pane.getChildren().get(i);
@@ -248,9 +260,11 @@ public class Gui extends Application
 
 		boolean isBlack = TurnButton.isActive() ? TurnButton.getTurn() % 2 == 0 : game.isBlack();
 
+		
 		button.setOnMouseEntered(e -> button.setBackground(images.get(isBlack ? BLACK_IMAGE : WHITE_IMAGE)));
 		button.setOnMouseExited(e -> button.setBackground(images.get(EMPTY_IMAGE)));
-		button.setOnAction(e -> GoController.placeStone(game, position));
+		button.setOnAction(e->GoController.buttonInput(event->GoController.placeStone(game, position), e));
+		
 	}
 
 	private static void activateTerritoryButton(Button button, BoardPiece piece)
@@ -260,7 +274,7 @@ public class Gui extends Application
 		button.setOnMouseEntered(e -> button.setBackground(images.get(isBlack ? BLACK_IMAGE : WHITE_IMAGE)));
 		button.setOnMouseExited(e -> button.setBackground(piece.getColor() == Color.colorless ? images.get(EMPTY_IMAGE)
 				: piece.getColor() == Color.black ? images.get(EMPTY_BLACK_IMAGE) : images.get(EMPTY_WHITE_IMAGE)));
-		button.setOnAction(e -> GoController.placeStone(game, piece.getPosition()));
+		button.setOnAction(e->GoController.buttonInput(event -> GoController.placeStone(game, piece.getPosition()), e));
 	}
 
 	private static void activateEndGameButton(Button button, Position position, HashMap<Position, Color> fadedStone)
@@ -289,7 +303,7 @@ public class Gui extends Application
 		newMemory.setPrefHeight(BUTTON_SIZE);
 		getMemoryLine().add(newMemory);
 		int newTurn = turn.getTurn();
-		newMemory.setOnAction(e -> GoController.getBoardAt(game, newTurn));
+		newMemory.setOnAction(e->GoController.buttonInput(event -> GoController.getBoardAt(game, newTurn), e));
 	}
 
 	public static ObservableList<Node> getMemoryLine()
@@ -310,7 +324,7 @@ public class Gui extends Application
 
 		undo.setPrefHeight(BUTTON_SIZE);
 		undo.setMinWidth(BUTTON_SIZE);
-		undo.setOnAction(e -> GoController.undo(game));
+		undo.setOnAction(e->GoController.buttonInput(event -> GoController.undo(game), e));
 		
 		pass.setPrefHeight(BUTTON_SIZE);
 		pass.setMinWidth(BUTTON_SIZE);
@@ -318,7 +332,7 @@ public class Gui extends Application
 
 		showTerritory.setPrefHeight(BUTTON_SIZE);
 		showTerritory.setMinWidth(BUTTON_SIZE);
-		showTerritory.setOnAction(e -> GoController.showTerritory(game));
+		showTerritory.setOnAction(e -> GoController.showTerritory(game,showTerritory));
 
 		confirmEnd.setPrefHeight(BUTTON_SIZE);
 		confirmEnd.setMinWidth(BUTTON_SIZE);
@@ -382,6 +396,20 @@ public class Gui extends Application
 
 		return points;
 	}
+	
+	private HBox fileChooser()
+	{
+		HBox box = new HBox();
+		
+		Button openFile = new Button("Open game");
+		openFile.setPrefHeight(BUTTON_SIZE);
+		openFile.setOnAction(e->GoController.openFile(game, mainStage));
+		
+		box.getChildren().addAll(openFile);
+		
+		return box;
+	}
+
 
 	public static void setEndGameControl()
 	{
@@ -397,7 +425,7 @@ public class Gui extends Application
 		ObservableList<Node> control = getControl();
 
 		setButton((Button) control.get(1), e -> GoController.pass(game), "Pass");
-		setButton((Button) control.get(2), e -> GoController.showTerritory(game), "Show territory");
+		setButton((Button) control.get(2), e -> GoController.showTerritory(game,(Button) control.get(2)), "Show territory");
 		setButton((Button) control.get(3), null, "");
 	}
 
@@ -433,6 +461,11 @@ public class Gui extends Application
 		winner.showAndWait();
 		
 		mainStage.close();
+	}
+	
+	public static void setGame(Game game)
+	{
+		Gui.game = game;
 	}
 	
 	private void loadImages()

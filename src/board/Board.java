@@ -48,7 +48,6 @@ public class Board
 		while (!moveStack.isEmpty())
 		{
 			Move move = moveStack.pop();
-			// TODO check the case where the move is null (player passed)
 			if (move.getPosition() != null)
 				setBoardPiece(move.getColor(), TileStatus.STONE, move.getPosition().getX(), move.getPosition().getY());
 

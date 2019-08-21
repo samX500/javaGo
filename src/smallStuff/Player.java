@@ -7,7 +7,10 @@ public class Player
 	 */
 	private Capture capture;
 
-	// TODO maybe add a name if needed
+	/**
+	 * Komi of the player
+	 */
+	private Komi komi;
 
 	/**
 	 * Creates a new player and set it's capture to 0
@@ -15,11 +18,29 @@ public class Player
 	public Player()
 	{
 		capture = new Capture(0);
+		komi = new Komi(0.0);
 	}
 
-	public Player(int capture)
+	public Player(Double komi)
+	{
+		capture = new Capture(0);
+		this.komi = new Komi(komi);
+	}
+	
+	public Player(int capture, Double komi)
 	{
 		this.capture = new Capture(capture);
+		this.komi = new Komi(komi);
+	}
+
+	public Double getKomi()
+	{
+		return komi.getKomi();
+	}
+
+	public void setKomi(Double komi)
+	{
+		this.komi.setKomi(komi);
 	}
 
 	public int getCapture()
@@ -44,7 +65,7 @@ public class Player
 
 	public Player clonePlayer()
 	{
-		return new Player(this.getCapture());
+		return new Player(this.getCapture(),this.getKomi());
 	}
 	
 	public String toString()

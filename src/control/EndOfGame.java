@@ -21,7 +21,8 @@ public class EndOfGame
 		HashMap<Position, Color> fadedStone = new HashMap<>();
 
 		Gui.setEndGameControl();
-		Gui.showEndGame(fadedStone);
+		Gui.showEndView(fadedStone);
+		
 	}
 
 	public static boolean isGameEnding()

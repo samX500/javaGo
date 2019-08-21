@@ -10,6 +10,12 @@ public class Dimension
 		setLenght(lenght);
 		setWidth(width);
 	}
+	
+	public Dimension(Dimension dimension)
+	{
+		setLenght(dimension.getLenght());
+		setWidth(dimension.getWidth());
+	}
 
 	public int getLenght()
 	{

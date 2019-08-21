@@ -1,8 +1,12 @@
 package application;
 
+import java.util.Stack;
+
 import board.Board;
+import control.GoController;
 import exception.ConstructorException;
 import memory.Memory;
+import memory.Move;
 import smallStuff.*;
 
 public class Game
@@ -15,8 +19,6 @@ public class Game
 
 	private Player player1;
 	private Player player2;
-	private Komi blackKomi;
-	private Komi whiteKomi;
 
 	/**
 	 * Constructor for normal game
@@ -31,13 +33,10 @@ public class Game
 	{
 		if (Board.validateSize(lenght, width))
 		{
-			// TODO add memory
 			board = new Board(lenght, width);
 			turn = new Turn();
-			player1 = new Player();
-			player2 = new Player();
-			blackKomi = new Komi(0.0);
-			whiteKomi = new Komi(TIE_BREAKER);
+			player1 = new Player(0.0);
+			player2 = new Player(TIE_BREAKER);
 			memory = new Memory(lenght, width, new Player[] { player1, player2 });
 
 		} else
@@ -55,8 +54,7 @@ public class Game
 	 * @throws SuicideException
 	 * @throws ConstructorException
 	 */
-	public Game(int lenght, int width, int blackKomi, int whiteKomi, Board board)
-			throws ConstructorException
+	public Game(int lenght, int width, int blackKomi, int whiteKomi, Board board) throws ConstructorException
 	{
 		if (board != null)
 			this.board = board;
@@ -66,21 +64,58 @@ public class Game
 			throw new ConstructorException("Invalid size");
 
 		turn = new Turn();
-		player1 = new Player();
-		player2 = new Player();
-		this.blackKomi = new Komi(blackKomi + 0.0);
-		this.whiteKomi = new Komi(whiteKomi + TIE_BREAKER);
+		player1 = new Player(blackKomi+0.0);
+		player2 = new Player(whiteKomi+TIE_BREAKER);
 		memory = new Memory(lenght, width, new Player[] { player1, player2 });
 	}
 
+	/**
+	 * Constructor to create a new game from a file
+	 * 
+	 * @param moveStack List of move made
+	 * @param dimension Dimensions of the board
+	 * @param komi Komi of white player
+	 */
+	public Game(Stack<Move> moveStack, Dimension dimension,double komi)
+	{
+		board = new Board(dimension.getLenght(), dimension.getWidth());
+		turn = new Turn();
+		player1 = new Player(0.0);
+		player2 = new Player(komi + TIE_BREAKER);
+		memory = new Memory(dimension, new Player[] { player1, player2 });
+		
+		System.out.println(moveStack);
+		
+		while (!moveStack.isEmpty())
+		{
+			Move move = moveStack.pop();
+			if(move.getPosition()==null)
+				GoController.pass(this);
+			else
+				GoController.placeStone(this, move.getPosition());
+			
+		}
+	}
+	
 	public Double getBlackKomi()
 	{
-		return blackKomi.getKomi();
+		return player1.getKomi();
 	}
 
 	public Double getWhiteKomi()
 	{
-		return whiteKomi.getKomi();
+		return player2.getKomi();
+	}
+
+	public void setBlackKomi(int komi)
+	{
+		player1.setKomi(komi + 0.0);
+	}
+
+	public void setWhiteKomi(int komi)
+
+	{
+		player2.setKomi(komi + TIE_BREAKER);
 	}
 
 	public void incrementTurn()
@@ -134,9 +169,9 @@ public class Game
 	{
 		int[] scores = board.countTerritory();
 
-		double[] result = new double[] {scores[0],scores[1]};
-		result[0] += player1.getCapture()+blackKomi.getKomi();
-		result[1] += player2.getCapture()+whiteKomi.getKomi();
+		double[] result = new double[] { scores[0], scores[1] };
+		result[0] += player1.getCapture() + player1.getKomi();
+		result[1] += player2.getCapture() + player2.getKomi();
 
 		return result;
 	}
@@ -145,5 +180,5 @@ public class Game
 	{
 		return memory;
 	}
-	
+
 }

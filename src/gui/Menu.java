@@ -13,7 +13,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -36,6 +38,7 @@ public class Menu
 
 		VBox hBox = new VBox();
 		VBox vBox = new VBox();
+		HBox button = new HBox();
 
 		Label hLabel = new Label("Horizontal dimension");
 		Label vLabel = new Label("Vertical dimension");
@@ -47,12 +50,13 @@ public class Menu
 
 		hBox.getChildren().addAll(hLabel, hText);
 		vBox.getChildren().addAll(vLabel, vText);
+		button.getChildren().addAll(confirmDimension);
 
 		BorderPane pane = new BorderPane();
 		pane.setTop(question);
 		pane.setLeft(hBox);
 		pane.setRight(vBox);
-		pane.setBottom(confirmDimension);
+		pane.setBottom(button);
 
 		confirmDimension.setOnAction(e -> confirmDimension(hText, vText, stage));
 
@@ -117,14 +121,14 @@ public class Menu
 
 	public static void closeProgram(WindowEvent closingEvent)
 	{
-		//Stops the normal closing event.
+		// Stops the normal closing event.
 		closingEvent.consume();
-		
+
 		Alert confirmation = new Alert(AlertType.CONFIRMATION);
 		confirmation.setTitle("Confirm closing request");
 		confirmation.setContentText("Are you sure you want to close the program?");
-		
-		if(confirmation.showAndWait().get() == ButtonType.OK)
+
+		if (confirmation.showAndWait().get() == ButtonType.OK)
 			System.exit(0);
 	}
 

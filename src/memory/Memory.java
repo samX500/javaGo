@@ -23,12 +23,20 @@ public class Memory
 	 */
 	private Dimension dimension;
 
-	public Memory(int lenght, int width,Player[] players) throws ConstructorException
+	public Memory(int lenght, int width,Player[] players)
 	{
 		this.undoMemory = new Stack<>();
 		this.doMemory = new Stack<>();
 		this.players = players;
 		dimension = new Dimension(lenght, width);
+	}
+	
+	public Memory(Dimension dimension,Player[] players)
+	{
+		this.undoMemory = new Stack<>();
+		this.doMemory = new Stack<>();
+		this.players = players;
+		this.dimension = new Dimension(dimension);
 	}
 
 	/**
@@ -69,7 +77,7 @@ public class Memory
 
 	public Board getLastBoard()
 	{
-		return getBoard(this.getSize());
+		return getBoard(this.size());
 	}
 
 	public void saveMove(Position position, Color piece)
@@ -82,11 +90,36 @@ public class Memory
 		undoMemory.pop();
 	}
 
-	public int getSize()
+	public int size()
 	{
 		return undoMemory.size();
 	}
 
+	public Stack<Move> getMove()
+	{
+		return StackOpperation.reverseStack(StackOpperation.cloneStack(undoMemory));
+	}
+	
+	public double getKomi()
+	{
+		return players[1].getKomi();
+	}
+	
+	public void setKomi(int komi)
+	{
+		players[1].setKomi(komi+0.0);
+	}
+	
+	public Dimension getDimension()
+	{
+		return dimension;
+	}
+	
+	public void setDimension(int lenght, int width)
+	{
+		dimension = new Dimension(lenght, width);
+	}
+	
 	public String toString()
 	{
 		return undoMemory + "";

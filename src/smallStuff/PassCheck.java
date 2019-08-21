@@ -2,7 +2,6 @@ package smallStuff;
 
 public class PassCheck
 {
-	private static int turn = 0;
 	private static boolean isActive = false;
 
 	public static boolean isActive()
@@ -10,10 +9,9 @@ public class PassCheck
 		return isActive;
 	}
 
-	public static void setActive(int passTurn)
+	public static void setActive()
 	{
 		isActive = true;
-		turn = passTurn;
 	}
 
 	public static void setInactive()
@@ -21,10 +19,4 @@ public class PassCheck
 		isActive = false;
 	}
 
-	public static int getTurn()
-	{
-		if (isActive)
-			return turn;
-		return -1;
-	}
 }
