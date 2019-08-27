@@ -25,7 +25,7 @@ public class Board
 	 */
 	public Board(int lenght, int width)
 	{
-		dimension = new Dimension(lenght + BORDER, width + BORDER);
+		dimension = new Dimension(lenght, width);
 		instantiateList();
 		buildBoard();
 	}
@@ -53,7 +53,7 @@ public class Board
 
 			if (i > 1)
 			{
-				KOBoard[i] = clone(this);
+				KOBoard[i] = this.clone();
 
 				if (move.getPosition() != null)
 					this.checkDeadPiece(players, move.getPosition(), KOBoard[i - 2]);
@@ -64,15 +64,15 @@ public class Board
 
 	}
 
-	private static Board clone(Board board)
+	public Board clone()
 	{
-		Board clone = new Board(board.getLenght() - BORDER, board.getWidth() - BORDER);
+		Board clone = new Board(getLenght(), getWidth());
 
-		for (int i = 0; i < board.getLenght(); i++)
+		for (int i = 0; i < getLenght(); i++)
 		{
-			for (int j = 0; j < board.getWidth(); j++)
+			for (int j = 0; j < getWidth(); j++)
 			{
-				BoardPiece piece = board.getBoardPiece((i * board.getWidth()) + j);
+				BoardPiece piece = getBoardPiece((i * getWidth()) + j);
 
 				clone.setBoardPiece(piece.getColor(), piece.getStatus(), i, j);
 			}
@@ -216,7 +216,7 @@ public class Board
 			BoardPiece piece = getNeighbours(stone.getPosition(), Direction.values()[i]);
 			if (piece.isStone() && piece.getColor() != stone.getColor() && stoneIsDead(piece, victims))
 			{
-				Board testEqual = clone(this);
+				Board testEqual = this.clone();
 				for (BoardPiece victim : victims)
 					testEqual.setBoardPiece(Color.colorless, TileStatus.EMPTY, victim.getXPosition(),
 							victim.getYPosition());

@@ -2,9 +2,12 @@ package fileManagement;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import smallStuff.*;
 
 /**
  * HashMap that give value the characters
@@ -12,58 +15,64 @@ import java.util.TreeSet;
 
 public class CharList
 {
-	public static final char[] ALPHABET = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-			'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+	public static final char[] ALPHABET = new char[]
+	{ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+			'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
-	private HashMap<Character, Integer> character;
+	private List<CharInt> characterList;
 
-	/**
-	 * Instatiate an HashMap containing a key for each character charList and a
-	 * value coresponding to their emplacement in the list
-	 * 
-	 * @param charList List of character
-	 */
 	public CharList(char[] charList)
 	{
-		character = new HashMap<>();
+		characterList = new LinkedList<>();
 		generateMap(charList, 0);
 	}
 
-	/**
-	 * Instatiate an HashMap containing a key for each character charList and a
-	 * value coresponding to the starting value additioned with their emplacement in
-	 * the list
-	 * 
-	 * @param charList      List of character
-	 * @param startingValue Starting value for the value of the character
-	 */
 	public CharList(char[] charList, int startingValue)
 	{
-		character = new HashMap<>();
+		characterList = new LinkedList<>();
 		generateMap(charList, startingValue);
 	}
 
 	private void generateMap(char[] charList, int startingValue)
 	{
 		for (int i = 0; i < charList.length; i++)
-			character.put(charList[i], startingValue + i);
+			characterList.add(new CharInt(charList[i], startingValue + i));
 	}
 
 	/**
-	 * return the value of a character that is key of the hashMap
+	 * Receive a character and return the corresponding integer 
 	 * 
-	 * @param character key to access the HashMap
-	 * @return value at the key character
-	 * @throws NullPointerException if character isn't a key of the hashMap
+	 * @param character character received
+	 * @return corresponding integer 
+	 * @throws NullPointerException
 	 */
 	public int getValue(char character) throws NullPointerException
 	{
-		return this.character.get(character);
+		for (CharInt charInt : characterList)
+			if (charInt.getCharacter() == character)
+				return charInt.getInteger();
+
+		throw new NullPointerException();
 	}
-	
+
+	/**
+	 * Receive an integer and return the corresponding character
+	 * @param integer integer received
+	 * @return corresponding character 
+	 * @throws NullPointerException
+	 */
+	public char getChar(int integer) throws NullPointerException
+	{
+		for (CharInt charInt : characterList)
+			if (charInt.getInteger() == integer)
+				return charInt.getCharacter();
+
+		throw new NullPointerException();
+	}
+
 	public String toString()
 	{
-		return character.entrySet().toString();
+		return "";
 	}
 
 }

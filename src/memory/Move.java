@@ -20,6 +20,16 @@ public class Move
 		return position;
 	}
 
+	public int getX()
+	{
+		return position.getX();
+	}
+	
+	public int getY()
+	{
+		return position.getY();
+	}
+	
 	public void setPosition(Position position)
 	{
 		this.position = position;

@@ -37,6 +37,17 @@ public class Dimension
 		this.width = width;
 	}
 
+	public void addDim(int toAdd)
+	{
+		lenght += toAdd;
+		width += toAdd;
+	}
+	
+	public void removeDim(int toRemove)
+	{
+		addDim(-1*toRemove);
+	}
+	
 	public int getArea()
 	{
 		return width*lenght;
@@ -47,6 +58,22 @@ public class Dimension
 		return dimension != null && lenght == dimension.getLenght() && width == dimension.getWidth();
 	}
 
+	/**
+	 * Return the size of the dimension if width == lenght or empty if width != lenght
+	 * @return size of the dimension if width == lenght or empty if width != lenght
+	 */
+	public String squareDim()
+	{
+		if(width==lenght)
+			return ""+width;
+		return "";
+	}
+	
+	public Dimension clone()
+	{
+		return new Dimension(this);
+	}
+	
 	public String toString()
 	{
 		return "lenght: " + lenght + ", width: " + width;

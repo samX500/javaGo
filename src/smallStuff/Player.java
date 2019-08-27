@@ -63,7 +63,7 @@ public class Player
 		capture.setCapture(getCapture()-1);
 	}
 
-	public Player clonePlayer()
+	public Player clone()
 	{
 		return new Player(this.getCapture(),this.getKomi());
 	}

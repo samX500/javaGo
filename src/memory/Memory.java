@@ -100,6 +100,12 @@ public class Memory
 		return StackOpperation.reverseStack(StackOpperation.cloneStack(undoMemory));
 	}
 	
+	private void setMove(Stack<Move> doMem,Stack<Move> undoMem)
+	{
+		doMemory = StackOpperation.cloneStack(doMem);
+		undoMemory = StackOpperation.cloneStack(undoMem);
+	}
+	
 	public double getKomi()
 	{
 		return players[1].getKomi();
@@ -118,6 +124,14 @@ public class Memory
 	public void setDimension(int lenght, int width)
 	{
 		dimension = new Dimension(lenght, width);
+	}
+	
+	public Memory clone()
+	{
+		Player[] clonedPlayers = new Player[] {players[0].clone(),players[1].clone()};
+		Memory clone = new Memory(dimension.clone(), clonedPlayers);
+		clone.setMove(doMemory, undoMemory);
+		return clone;
 	}
 	
 	public String toString()

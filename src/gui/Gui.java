@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.sun.xml.internal.ws.api.pipe.PipeCloner;
-
 import application.Game;
 import board.Board;
 import boardPiece.BoardPiece;
@@ -19,12 +17,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBase;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
@@ -79,7 +75,6 @@ public class Gui extends Application
 		game = Menu.createGame();
 
 		setupGui(stage, game.getBoard());
-		
 	}
 
 	/**
@@ -99,7 +94,7 @@ public class Gui extends Application
 
 		display.setTop(fileChooser());
 		display.setBottom(setupMemory());
-		display.setCenter(makeGrid());
+		display.setCenter(makeGrid(currentBoard.getDimension()));
 		display.setRight(pointChart());
 		showView();
 
@@ -112,22 +107,26 @@ public class Gui extends Application
 
 	}
 
+	public static void setGrid(Dimension dimension)
+	{
+		display.setCenter(makeGrid(dimension));
+	}
 	
-	private GridPane makeGrid()
+	private static GridPane makeGrid(Dimension dimension)
 	{
 		GridPane pane = new GridPane();
-		Board currentBoard = game.getBoard();
 
-		for (int i = 0; i < currentBoard.getLenght(); i++)
+		for (int i = 0; i < dimension.getLenght(); i++)
 		{
-			for (int j = 0; j < currentBoard.getWidth(); j++)
+			for (int j = 0; j < dimension.getWidth(); j++)
 			{
 				Button temp = new Button();
 				temp.setPrefSize(BUTTON_SIZE, BUTTON_SIZE);
 				pane.add(temp, i, j);
 			}
 		}
-		pane.setMinSize(BUTTON_SIZE * currentBoard.getLenght(), BUTTON_SIZE * currentBoard.getWidth());
+		
+		pane.setMinSize(BUTTON_SIZE * dimension.getLenght(), BUTTON_SIZE * dimension.getWidth());
 		return pane;
 	}
 
@@ -202,13 +201,12 @@ public class Gui extends Application
 	{
 		Board currentBoard = game.getBoard();
 		GridPane pane = (GridPane) display.getCenter();
-
-		System.out.println(currentBoard);
 		
 		for (int i = 0; i < pane.getChildren().size(); i++)
 		{
 			Button thisButton = (Button) pane.getChildren().get(i);
 			BoardPiece piece = currentBoard.getBoardPiece(i);
+			
 			if (piece.getStatus() == TileStatus.STONE)
 				thisButton.setBackground(
 						(piece.getColor() == Color.black ? images.get(BLACK_IMAGE) : images.get(WHITE_IMAGE)));
@@ -402,10 +400,15 @@ public class Gui extends Application
 		HBox box = new HBox();
 		
 		Button openFile = new Button("Open game");
+		Button saveFile = new Button("Save game");
+		
 		openFile.setPrefHeight(BUTTON_SIZE);
 		openFile.setOnAction(e->GoController.openFile(game, mainStage));
 		
-		box.getChildren().addAll(openFile);
+		saveFile.setPrefHeight(BUTTON_SIZE);
+		saveFile.setOnAction(e-> GoController.saveFile(game));
+		
+		box.getChildren().addAll(openFile,saveFile);
 		
 		return box;
 	}

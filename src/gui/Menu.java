@@ -5,6 +5,7 @@ import javafx.scene.control.TextField;
 import java.util.Optional;
 
 import application.Game;
+import board.Board;
 import exception.ConstructorException;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -23,7 +24,7 @@ public class Menu
 {
 
 	public static final int MIN_BOARD_SIZE = 2;
-	public static final int MAX_BOARD_SIZE = 25;
+	public static final int MAX_BOARD_SIZE = 26;
 
 	/**
 	 * Create the board on the demand of the users
@@ -67,8 +68,8 @@ public class Menu
 
 		// TODO make a custom closing event for the "X"
 
-		int hDimension = Integer.parseInt(hText.getText());
-		int vDimension = Integer.parseInt(vText.getText());
+		int hDimension = Integer.parseInt(hText.getText())+Board.BORDER;
+		int vDimension = Integer.parseInt(vText.getText())+Board.BORDER;
 
 		return new Game(hDimension, vDimension);
 	}
@@ -119,6 +120,33 @@ public class Menu
 		alert.showAndWait();
 	}
 
+	/**
+	 * Ask a string to the user and returns it
+	 * @return string inputed by the user
+	 */
+	public static String askString(String message)
+	{
+		Stage window = new Stage();
+		BorderPane pane = new BorderPane();
+		
+		Label label = new Label(message);
+		TextField textField = new TextField();
+		Button confirmButton = new Button("Confirm");
+		
+		confirmButton.setOnAction(e->window.hide());
+		pane.setTop(label);
+		pane.setCenter(textField);
+		pane.setBottom(confirmButton);
+		
+		Scene scene = new Scene(pane);
+		window.setScene(scene);
+		//prevent the user from closing the window
+		window.setOnCloseRequest(e -> e.consume());
+		window.showAndWait();
+		
+		return textField.getText();
+	}
+	
 	public static void closeProgram(WindowEvent closingEvent)
 	{
 		// Stops the normal closing event.

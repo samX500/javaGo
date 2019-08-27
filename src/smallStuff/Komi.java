@@ -19,4 +19,8 @@ public class Komi
 		this.komi = komi;
 	}
 	
+	public Komi clone()
+	{
+		return new Komi(komi);
+	}
 }

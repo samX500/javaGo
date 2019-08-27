@@ -1,6 +1,6 @@
 package smallStuff;
 
-public class Position 
+public class Position
 {
 	/**
 	 * x coordinate
@@ -64,8 +64,14 @@ public class Position
 	public boolean equals(Object other)
 	{
 		if (other instanceof Position)
-			return this.x == ((Position) other).getX() && this.y == ((Position) other).getY();
+			return this.x == ((Position) other).getX()
+					&& this.y == ((Position) other).getY();
 		return false;
+	}
+
+	public String coordinate()
+	{
+		return ""+x + y;
 	}
 
 	public String toString()

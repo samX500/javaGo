@@ -84,16 +84,17 @@ public class Game
 		player2 = new Player(komi + TIE_BREAKER);
 		memory = new Memory(dimension, new Player[] { player1, player2 });
 		
-		System.out.println(moveStack);
-		
+		System.out.println(dimension);
 		while (!moveStack.isEmpty())
 		{
 			Move move = moveStack.pop();
 			if(move.getPosition()==null)
 				GoController.pass(this);
 			else
+			{
+				System.out.println(move.getPosition());
 				GoController.placeStone(this, move.getPosition());
-			
+			}
 		}
 	}
 	
